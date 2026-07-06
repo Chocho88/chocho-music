@@ -1,7 +1,9 @@
 ---
 title: Hebrew Beats
+title_he: ביטים עבריים
 slug: hebrew-beats
 date: 2024-01-01
+order: 2
 lang: en
 publish: true
 ---
@@ -15,6 +17,22 @@ I really love Israeli classic songs, they are part of my roots and always make m
 {{yt IoHOEVUd_C4}}
 
 And if you liked it, feel free to subscribe to [my YouTube channel](https://www.youtube.com/user/chochizzle80) and get notified when a new beat drops.
+
+{{yt 4PldHR5RyiU}}
+
+{{yt 2-Ur0xDR42E}}
+
+<!--he-->
+
+אני ממש אוהב שירים ישראליים קלאסיים, הם חלק מהשורשים שלי ותמיד גורמים לי להרגיש נוסטלגי ומחובר. אני גם ממש אוהב ביטים של לו-פיי, הם מרגיעים אותי. החלטתי לערבב את שתי האהבות הגדולות האלה לסדרה של ביטים ישראליים, תהנו.
+
+{{yt qYPpoMJVos4}}
+
+{{yt fX8I2mlqir8}}
+
+{{yt IoHOEVUd_C4}}
+
+ואם אהבתם, מוזמנים להירשם [לערוץ היוטיוב שלי](https://www.youtube.com/user/chochizzle80) ולקבל התראה כשביט חדש עולה.
 
 {{yt 4PldHR5RyiU}}
 

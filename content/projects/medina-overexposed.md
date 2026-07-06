@@ -1,7 +1,9 @@
 ---
 title: MEDINA - OVEREXPOSED
+title_he: מדינה - OVEREXPOSED
 slug: medina-overexposed
 date: 2025-06-01
+order: 1
 lang: en
 publish: true
 ---
@@ -19,3 +21,19 @@ The kit included:
 - 15-minute DNA Soundtrack for the catwalk
 - Curated playlists for the event
 - Short music cues for social media
+
+<!--he-->
+
+יצרתי פסקול ייעודי באורך 15 דקות לתצוגת "OVEREXPOSED" של סטודיו מדינה. הקונספט חקר את הדחף שלנו להיראות - בתנאים שלנו.
+
+התצוגה הפכה את המסלול לסט של ריאליטי, עם מצלמות ומסכים שחושפים כל פרט. היא חקרה את המתח בין שליטה לחשיפה, והציגה נשיות כנוכחות, כוח ופנטזיה.
+
+{{yt QP7UCBJ1bSg}}
+
+המוזיקה שהלחנתי צעדה יחד עם הדוגמניות, והעצימה את המסר של המותג בדרכים שמילים לא יכולות.
+
+הערכה כללה:
+
+- פסקול DNA באורך 15 דקות למסלול
+- פלייליסטים אוצרים לאירוע
+- קטעי מוזיקה קצרים לרשתות החברתיות
