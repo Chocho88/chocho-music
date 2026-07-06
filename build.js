@@ -19,7 +19,6 @@ const write = (rel, html) => {
 };
 const slugOf = (file) => path.basename(file, '.md').toLowerCase().replace(/[^\w֐-׿-]+/g, '-');
 const fmtDate = (d) => d ? new Date(d).toISOString().slice(0, 10) : '';
-const fmtDur = (s) => `${Math.floor(s / 60)}:${String(Math.round(s) % 60).padStart(2, '0')}`;
 
 /* ---------- load content ---------- */
 function loadCollection(dir, type) {
@@ -39,7 +38,8 @@ function loadCollection(dir, type) {
 }
 
 const notes = loadCollection('content/notes', 'note');
-const projects = loadCollection('content/projects', 'project');
+const projects = loadCollection('content/projects', 'project')
+  .sort((a, b) => a.title.localeCompare(b.title));
 const pages = loadCollection('content/pages', 'page');
 const beats = exists('content/beats/beats.json') ? JSON.parse(read('content/beats/beats.json')) : { date: null, tracks: [] };
 
@@ -49,8 +49,8 @@ const linkables = [...notes, ...projects].reduce((m, item) => {
   m.set(item.title.toLowerCase(), item);
   return m;
 }, new Map());
-const urlFor = (item) => item.type === 'note' ? u(`notes/${item.slug}/`) : u(`projects/${item.slug}/`);
-const backlinks = new Map(); // slug -> [items]
+const urlFor = (item) => item.type === 'note' ? u(`notes/${item.slug}/`) : u(`projects/#${item.slug}`);
+const backlinks = new Map();
 
 function resolveWiki(md, self) {
   return md.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, target, label) => {
@@ -66,42 +66,75 @@ function resolveWiki(md, self) {
   });
 }
 
-// {{yt VIDEOID}} -> embedded player
 const resolveYt = (md) => md.replace(/\{\{yt\s+([\w-]+)\}\}/g,
   (_, id) => `<div class="yt"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="video" loading="lazy" allowfullscreen frameborder="0"></iframe></div>`);
 
 const render = (item) => marked.parse(resolveYt(resolveWiki(item.body, item)));
 
-// first pass to populate backlinks
 [...notes, ...projects].forEach((i) => resolveWiki(i.body, i));
 
 /* ---------- layout ---------- */
 const icons = {
-  note: '<svg viewBox="0 0 16 16" width="13" height="13"><path fill="currentColor" d="M3 1h7l3 3v11H3V1zm7 1v3h3M5 8h6M5 11h6" stroke="currentColor" stroke-width="1" fill="none"/></svg>',
+  note: '<svg viewBox="0 0 16 16" width="13" height="13"><path d="M3 1h7l3 3v11H3V1zm7 1v3h3M5 8h6M5 11h6" stroke="currentColor" stroke-width="1" fill="none"/></svg>',
   beat: '<svg viewBox="0 0 16 16" width="13" height="13"><path fill="currentColor" d="M6 2v8.2A2.5 2.5 0 1 0 7 12V5l6-1.5V2L6 2z"/></svg>',
   photo: '<svg viewBox="0 0 16 16" width="13" height="13"><rect x="1.5" y="2.5" width="13" height="11" fill="none" stroke="currentColor"/><circle cx="5.5" cy="6" r="1.3" fill="currentColor"/><path d="M2 12l4-4 3 3 2.5-2.5L14 12" fill="none" stroke="currentColor"/></svg>',
   project: '<svg viewBox="0 0 16 16" width="13" height="13"><rect x="2" y="4.5" width="12" height="9" fill="none" stroke="currentColor"/><path d="M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5" fill="none" stroke="currentColor"/></svg>',
 };
 const typeLabel = { note: 'note', beat: 'beat', photo: 'photos', project: 'project' };
 
+// UI labels: [en, he]
+const L = {
+  home: ['Home', 'בית'],
+  music: ['Music', 'מוזיקה'],
+  projects: ['Music & Sound Projects', 'פרויקטים של מוזיקה וסאונד'],
+  artlist: ['Artlist', 'ארטליסט'],
+  photos: ['Photos', 'תמונות'],
+  notes: ['Notes', 'פתקים'],
+  about: ['About', 'אודות'],
+};
+const bi = (key) => `data-en="${esc(L[key][0])}" data-he="${esc(L[key][1])}"`;
+
 function nav(active) {
-  const link = (href, label, key, cls = '') =>
-    `<a href="${u(href)}" class="${cls}${active === key ? ' active' : ''}">${label}</a>`;
-  const projTree = projects.map((p) => link(`projects/${p.slug}/`, esc(p.title), `project:${p.slug}`, 'sub')).join('');
-  const noteTree = notes.map((n) => link(`notes/${n.slug}/`, esc(n.title), `note:${n.slug}`, 'sub')).join('');
+  const link = (href, key, cls = '') =>
+    `<a href="${u(href)}" ${bi(key)} class="${cls}${active === key ? ' active' : ''}">${L[key][0]}</a>`;
+  const noteTree = notes.map((n) => `<a href="${u(`notes/${n.slug}/`)}" class="sub${active === `note:${n.slug}` ? ' active' : ''}">${esc(n.title)}</a>`).join('');
   return `
   <nav class="sidebar" id="sidebar">
     <a class="site-name" href="${u('')}">Chocho</a>
-    ${link('', 'Home', 'home')}
-    ${link('music/', 'Music', 'music')}
-    <details ${active.startsWith('project') ? 'open' : ''}><summary>${link('projects/', 'Projects', 'projects')}</summary>${projTree}</details>
-    ${link('photos/', 'Photos', 'photos')}
-    <details ${active.startsWith('note') ? 'open' : ''}><summary>${link('notes/', 'Notes', 'notes')}</summary>${noteTree || '<span class="sub empty">empty</span>'}</details>
-    ${link('about/', 'About', 'about')}
+    ${link('', 'home')}
+    ${link('music/', 'music')}
+    ${link('projects/', 'projects')}
+    ${link('artlist/', 'artlist')}
+    ${link('photos/', 'photos')}
+    <details ${active.startsWith('note') ? 'open' : ''}><summary>${link('notes/', 'notes')}</summary>${noteTree || '<span class="sub empty">-</span>'}</details>
+    ${link('about/', 'about')}
+    <button id="langToggle" class="lang-toggle" aria-label="switch language">עב</button>
   </nav>`;
 }
 
-function layout({ title, active = '', lang = 'en', content }) {
+const langScript = `<script>
+(function(){
+  var KEY='gardenLang';
+  function apply(l){
+    document.querySelectorAll('[data-en]').forEach(function(el){
+      el.textContent = l==='he' ? el.dataset.he : el.dataset.en;
+    });
+    var s=document.querySelector('.sidebar'); if(s) s.dir = l==='he'?'rtl':'ltr';
+    var b=document.getElementById('langToggle'); if(b) b.textContent = l==='he'?'EN':'עב';
+  }
+  var saved='en'; try{ saved=localStorage.getItem(KEY)||'en'; }catch(e){}
+  apply(saved);
+  document.addEventListener('click',function(e){
+    if(e.target && e.target.id==='langToggle'){
+      saved = saved==='he'?'en':'he';
+      try{ localStorage.setItem(KEY,saved); }catch(err){}
+      apply(saved);
+    }
+  });
+})();
+</script>`;
+
+function layout({ title, active = '', lang = 'en', content, extraHead = '', extraBody = '' }) {
   return `<!doctype html>
 <html lang="${lang}">
 <head>
@@ -113,11 +146,14 @@ function layout({ title, active = '', lang = 'en', content }) {
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${u('style.css')}">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='13' font-size='14'%3E%E2%9D%80%3C/text%3E%3C/svg%3E">
+${extraHead}
 </head>
 <body>
 <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="menu">☰</button>
 ${nav(active)}
 <main>${content}</main>
+${langScript}
+${extraBody}
 </body>
 </html>`;
 }
@@ -132,9 +168,14 @@ function card({ type, href, title, date, lang, sub }) {
   </a>`;
 }
 
+const photos = exists('content/photos/photos.json') ? JSON.parse(read('content/photos/photos.json')) : [];
+const artlistPage = pages.find((p) => p.slug === 'artlist');
+
 const feed = [
-  ...notes.map((n) => ({ type: 'note', href: urlFor(n), title: n.title, date: n.date, lang: n.lang })),
-  ...projects.map((p) => ({ type: 'project', href: urlFor(p), title: p.title, date: p.date, lang: p.lang })),
+  ...notes.map((n) => ({ type: 'note', href: u(`notes/${n.slug}/`), title: n.title, date: n.date, lang: n.lang })),
+  ...projects.map((p) => ({ type: 'project', href: u(`projects/#${p.slug}`), title: p.title, date: p.date, lang: p.lang })),
+  ...(artlistPage ? [{ type: 'project', href: u('artlist/'), title: artlistPage.title, date: artlistPage.date, lang: 'en' }] : []),
+  ...(photos.length ? [{ type: 'photo', href: u('photos/'), title: 'Photos', sub: `${photos.length} pictures`, date: photos[0].date, lang: 'en' }] : []),
   { type: 'beat', href: u('music/'), title: 'The player', sub: `${beats.tracks.length} beats`, date: beats.date || null, lang: 'en' },
 ].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
@@ -149,7 +190,7 @@ write('index.html', layout({
 write('notes/index.html', layout({
   title: 'Notes', active: 'notes',
   content: `<h1 class="lang-en">Notes</h1>
-  ${notes.length ? `<ul class="index-list">${notes.map((n) => `<li ${n.lang === 'he' ? 'dir="rtl"' : ''}><a href="${urlFor(n)}" class="lang-${n.lang}">${esc(n.title)}</a> <span class="dim">${fmtDate(n.date)}</span></li>`).join('')}</ul>` : '<p class="dim">Nothing planted yet.</p>'}`,
+  ${notes.length ? `<ul class="index-list">${notes.map((n) => `<li ${n.lang === 'he' ? 'dir="rtl"' : ''}><a href="${u(`notes/${n.slug}/`)}" class="lang-${n.lang}">${esc(n.title)}</a> <span class="dim">${fmtDate(n.date)}</span></li>`).join('')}</ul>` : '<p class="dim">Nothing planted yet.</p>'}`,
 }));
 
 for (const n of notes) {
@@ -165,39 +206,111 @@ for (const n of notes) {
   }));
 }
 
-/* ---------- projects ---------- */
+/* ---------- projects: one scrollable page ---------- */
 write('projects/index.html', layout({
-  title: 'Projects', active: 'projects',
-  content: `<h1 class="lang-en">Projects</h1>
-  <ul class="index-list">${projects.map((p) => `<li><a href="${urlFor(p)}" class="lang-${p.lang}">${esc(p.title)}</a> <span class="dim">${fmtDate(p.date)}</span></li>`).join('')}</ul>`,
+  title: 'Music & Sound Projects', active: 'projects',
+  content: `<h1 class="lang-en">Music &amp; Sound Projects</h1>
+  <nav class="project-toc">${projects.map((p) => `<a href="#${p.slug}">${esc(p.title)}</a>`).join('')}</nav>
+  ${projects.map((p) => `<article id="${p.slug}" class="project-block" ${p.lang === 'he' ? 'dir="rtl"' : ''}>
+    <h2 class="lang-${p.lang}">${esc(p.title)}</h2>
+    ${render(p)}
+  </article>`).join('')}`,
 }));
 
-for (const p of projects) {
-  const bl = backlinks.get(p.slug) || [];
-  write(`projects/${p.slug}/index.html`, layout({
-    title: p.title, active: `project:${p.slug}`, lang: p.lang,
-    content: `<article ${p.lang === 'he' ? 'dir="rtl"' : ''}>
-      <h1 class="lang-${p.lang}">${esc(p.title)}</h1>
-      ${render(p)}
-      ${bl.length ? `<section class="backlinks"><h2>Linked from</h2><ul>${bl.map((b) => `<li><a href="${urlFor(b)}">${esc(b.title)}</a></li>`).join('')}</ul></section>` : ''}
-    </article>`,
+/* ---------- artlist (top-level page) ---------- */
+if (artlistPage) {
+  write('artlist/index.html', layout({
+    title: artlistPage.title, active: 'artlist', lang: artlistPage.lang,
+    content: `<article><h1 class="lang-en">${esc(artlistPage.title)}</h1>${render(artlistPage)}</article>`,
   }));
 }
 
-/* ---------- music (phase-1 plain list; restyled player lands in phase 2) ---------- */
+/* ---------- music: the garden player ---------- */
+const tracksJson = JSON.stringify(beats.tracks.map((t) => ({ title: t.title, file: u(t.file), dur: t.dur, cover: t.cover ? u(t.cover) : null })));
 write('music/index.html', layout({
   title: 'Music', active: 'music',
   content: `<h1 class="lang-en">Music</h1>
-  <ul class="tracklist">
-  ${beats.tracks.map((t) => `<li>
-    <div class="track-head"><span class="lang-en track-title">${esc(t.title)}</span><span class="dim">${fmtDur(t.dur)}</span></div>
-    <audio controls preload="none" src="${u(t.file)}"></audio>
-  </li>`).join('')}
-  </ul>`,
+  <div class="player" id="player">
+    <div class="np">
+      <div class="np-cover" id="npCover"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></div>
+      <div class="np-info">
+        <div class="np-title lang-en" id="npTitle">–</div>
+        <div class="np-bar-row">
+          <span class="dim mono" id="npCur">0:00</span>
+          <div class="np-bar" id="npBar"><div class="np-fill" id="npFill"></div></div>
+          <span class="dim mono" id="npDur">0:00</span>
+        </div>
+      </div>
+    </div>
+    <div class="np-controls">
+      <button id="btnPrev" aria-label="previous"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button id="btnPlay" class="big" aria-label="play/pause"><svg id="icoPlay" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg><svg id="icoPause" viewBox="0 0 24 24" width="24" height="24" style="display:none"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button>
+      <button id="btnNext" aria-label="next"><svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+      <span class="np-spacer"></span>
+      <button id="btnShuffle" class="on" aria-label="shuffle" title="Shuffle"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg></button>
+      <button id="btnRepeat" aria-label="repeat" title="No repeat"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
+      <a id="btnDl" href="#" download aria-label="download" title="Download"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></a>
+    </div>
+  </div>
+  <ol class="tracks" id="tracks"></ol>`,
+  extraBody: `<script>
+(function(){
+  var TRACKS=${tracksJson};
+  var audio=new Audio(); audio.preload='none';
+  var cur=0, shuffle=true, repeat='none', order=[];
+  var $=function(id){return document.getElementById(id);};
+  var fmt=function(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+  function buildOrder(){ order=TRACKS.map(function(_,i){return i;});
+    if(shuffle){ for(var i=order.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=order[i];order[i]=order[j];order[j]=t; } } }
+  var list=$('tracks');
+  TRACKS.forEach(function(t,i){
+    var li=document.createElement('li');
+    li.innerHTML='<button class="row-play" aria-label="play"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></button>'+
+      '<span class="row-title lang-en"></span><span class="dim mono"></span>';
+    li.querySelector('.row-title').textContent=t.title;
+    li.querySelector('.mono').textContent=fmt(t.dur);
+    li.addEventListener('click',function(){ load(i); play(); });
+    list.appendChild(li);
+  });
+  function load(i){ cur=i; var t=TRACKS[i];
+    audio.src=t.file;
+    $('npTitle').textContent=t.title;
+    $('npDur').textContent=fmt(t.dur); $('npCur').textContent='0:00';
+    $('npFill').style.width='0%';
+    $('btnDl').href=t.file;
+    [].forEach.call(list.children,function(li,j){ li.classList.toggle('active', j===i); });
+    try{ localStorage.setItem('gardenTrack', i); }catch(e){}
+  }
+  function play(){ audio.play().catch(function(){}); }
+  function step(d){ var p=order.indexOf(cur), n=p+d;
+    if(n>=order.length){ if(repeat==='playlist') n=0; else return audio.pause(); }
+    if(n<0) n=order.length-1;
+    load(order[n]); play(); }
+  $('btnPlay').addEventListener('click',function(){ if(!audio.src){load(order[0]);} audio.paused?play():audio.pause(); });
+  $('btnPrev').addEventListener('click',function(){ audio.currentTime>3 ? audio.currentTime=0 : step(-1); });
+  $('btnNext').addEventListener('click',function(){ step(1); });
+  $('btnShuffle').addEventListener('click',function(){ shuffle=!shuffle; this.classList.toggle('on',shuffle); buildOrder(); });
+  $('btnRepeat').addEventListener('click',function(){
+    repeat = repeat==='none'?'playlist':repeat==='playlist'?'track':'none';
+    this.classList.toggle('on',repeat!=='none');
+    this.title = repeat==='none'?'No repeat':repeat==='playlist'?'Repeat playlist':'Repeat track';
+  });
+  $('npBar').addEventListener('click',function(e){ var r=this.getBoundingClientRect();
+    if(audio.duration) audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration; });
+  audio.addEventListener('timeupdate',function(){ $('npCur').textContent=fmt(audio.currentTime);
+    if(audio.duration) $('npFill').style.width=(audio.currentTime/audio.duration*100)+'%'; });
+  audio.addEventListener('ended',function(){ if(repeat==='track'){ audio.currentTime=0; play(); } else step(1); });
+  audio.addEventListener('play',function(){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; });
+  audio.addEventListener('pause',function(){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; });
+  buildOrder();
+  var start=order[0];
+  try{ var s=parseInt(localStorage.getItem('gardenTrack')); if(!isNaN(s)&&TRACKS[s]) start=s; }catch(e){}
+  load(start);
+})();
+</script>`,
 }));
 
 /* ---------- photos ---------- */
-const photos = exists('content/photos/photos.json') ? JSON.parse(read('content/photos/photos.json')) : [];
 const allTags = [...new Set(photos.flatMap((p) => p.tags || []))].sort();
 
 function photosPage(sel) {
@@ -238,4 +351,4 @@ for (const f of fs.readdirSync('.')) {
   if (/\.(mp3|png|jpe?g|webp)$/i.test(f)) fs.copyFileSync(f, path.join(OUT, f));
 }
 
-console.log('built', fs.readdirSync(OUT).length, 'entries in _site');
+console.log('built ok:', fs.readdirSync(OUT).length, 'entries in _site');
