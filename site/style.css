@@ -13,13 +13,19 @@
   font-weight: 900;
   font-display: swap;
 }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Open Sauce Sans'; src: url('fonts/OpenSauceSans-Black.woff2') format('woff2'); font-weight: 900; font-display: swap; }
 
 :root {
   --ink: #111;
   --paper: #fff;
   --dim: #777;
   --hair: #e3e3e3;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --sans: 'Open Sauce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
   --he: 'Noto Sans Hebrew', sans-serif;
   --title-en: 'Recoleta', Georgia, serif;
 }
@@ -91,6 +97,27 @@ article img { max-width: 100%; height: auto; }
 
 .menu-btn { display: none; }
 
+.lang-toggle {
+  margin-top: auto;
+  align-self: flex-start;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-family: var(--he);
+  font-size: .8rem;
+  padding: 3px 12px;
+  cursor: pointer;
+  border-radius: 999px;
+}
+.lang-toggle:hover { background: var(--ink); color: var(--paper); }
+
+/* ---- projects single page ---- */
+.project-toc { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.project-toc a { font-size: .85rem; text-decoration: none; border: 1px solid var(--hair); padding: 2px 10px; border-radius: 999px; }
+.project-block { max-width: 640px; padding: 34px 0; border-top: 1px solid var(--hair); }
+.project-block:first-of-type { border-top: none; }
+.project-block h2 { font-size: 1.5rem; margin-top: 0; scroll-margin-top: 20px; }
+
 /* ---- main ---- */
 main { flex: 1; padding: 48px min(6vw, 64px); max-width: 900px; }
 .intro { font-size: 1.05rem; margin-bottom: 28px; }
@@ -126,12 +153,48 @@ main { flex: 1; padding: 48px min(6vw, 64px); max-width: 900px; }
 .index-list { list-style: none; }
 .index-list li { padding: 8px 0; border-bottom: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 
-/* ---- music ---- */
-.tracklist { list-style: none; max-width: 640px; }
-.tracklist li { padding: 12px 0; border-bottom: 1px solid var(--hair); }
-.track-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-.track-title { font-weight: 700; font-family: var(--title-en); }
-.tracklist audio { width: 100%; height: 36px; }
+/* ---- music: the garden player ---- */
+.mono { font-variant-numeric: tabular-nums; }
+.player {
+  max-width: 640px; border: 1px solid var(--ink);
+  padding: 16px; position: sticky; top: 12px;
+  background: var(--paper); z-index: 5;
+}
+.np { display: flex; gap: 14px; align-items: center; }
+.np-cover {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border: 1px solid var(--hair);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--dim);
+}
+.np-cover img { width: 100%; height: 100%; object-fit: cover; }
+.np-info { flex: 1; min-width: 0; }
+.np-title { font-weight: 700; font-family: var(--title-en); font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.np-bar-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: .78rem; }
+.np-bar { flex: 1; height: 3px; background: var(--hair); cursor: pointer; }
+.np-fill { height: 100%; width: 0; background: var(--ink); }
+.np-controls { display: flex; align-items: center; gap: 4px; margin-top: 12px; }
+.np-controls button, .np-controls a {
+  background: none; border: none; color: var(--ink); cursor: pointer;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  padding: 0; text-decoration: none;
+}
+.np-controls button:hover, .np-controls a:hover { background: var(--ink); color: var(--paper); }
+.np-controls .big { width: 44px; height: 44px; }
+.np-controls button.on { outline: 1px solid var(--ink); outline-offset: -1px; }
+.np-spacer { flex: 1; }
+
+.tracks { list-style: none; max-width: 640px; margin-top: 18px; counter-reset: tr; }
+.tracks li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 6px; border-bottom: 1px solid var(--hair); cursor: pointer;
+}
+.tracks li:hover { background: var(--ink); color: var(--paper); }
+.tracks li:hover .dim { color: var(--paper); }
+.tracks li.active { font-weight: 700; }
+.tracks li.active .row-title::after { content: ' ♪'; }
+.row-play { background: none; border: none; color: inherit; cursor: pointer; display: flex; padding: 0; }
+.row-title { flex: 1; font-weight: 500; }
 
 /* ---- photos ---- */
 .photo-stream {
