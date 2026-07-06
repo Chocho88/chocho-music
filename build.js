@@ -212,15 +212,29 @@ for (const n of notes) {
   }));
 }
 
-/* ---------- projects: one scrollable page, custom order, bilingual ---------- */
+/* ---------- projects: one scrollable page, custom order, bilingual, productions at the end ---------- */
+const spotifyEmbed = (id) => `<iframe class="sp-embed" src="https://open.spotify.com/embed/track/${id}" width="100%" height="80" frameborder="0" loading="lazy" allow="encrypted-media"></iframe>`;
+const productionsHtml = produced ? `
+  <article id="productions" class="project-block productions">
+    <h2 class="lang-en i18n i18n-en">Productions</h2>
+    <h2 class="lang-he i18n i18n-he" dir="rtl">הפקות</h2>
+    <p class="dim i18n i18n-en">Songs I produced for other artists · <a href="${produced.playlist}">full playlist on Spotify</a></p>
+    <p class="dim i18n i18n-he" dir="rtl">שירים שהפקתי לאמנים אחרים · <a href="${produced.playlist}">הפלייליסט המלא בספוטיפיי</a></p>
+    ${produced.artists.map((a) => `<section class="artist-block" dir="rtl">
+      <h3 class="lang-he">${esc(a.name)}</h3>
+      ${a.tracks.map((t) => spotifyEmbed(t.id)).join('')}
+    </section>`).join('')}
+  </article>` : '';
+
 write('projects/index.html', layout({
   title: 'Music & Sound Projects', active: 'projects',
   content: `<h1 class="lang-en">Music &amp; Sound Projects</h1>
-  <nav class="project-toc">${projects.map((p) => `<a href="#${p.slug}">${esc(p.title)}</a>`).join('')}</nav>
+  <nav class="project-toc">${projects.map((p) => `<a href="#${p.slug}">${esc(p.title)}</a>`).join('')}<a href="#productions">Productions</a></nav>
   ${projects.map((p) => `<article id="${p.slug}" class="project-block">
     ${renderTitle(p, 'h2')}
     ${renderBody(p)}
-  </article>`).join('')}`,
+  </article>`).join('')}
+  ${productionsHtml}`,
 }));
 
 /* ---------- artlist ---------- */
@@ -233,18 +247,6 @@ if (artlistPage) {
 
 /* ---------- music: player with beat cards + productions ---------- */
 const tracksJson = JSON.stringify(beats.tracks.map((t) => ({ title: t.title, file: u(t.file), dur: t.dur, cover: t.cover ? u(t.cover) : null })));
-const producedHtml = produced ? `
-  <section class="productions">
-    <h2 class="lang-en">Productions</h2>
-    <p class="dim i18n i18n-en">Songs I produced for other artists · <a href="${produced.playlist}">full playlist on Spotify</a></p>
-    <p class="dim i18n i18n-he" dir="rtl">שירים שהפקתי לאמנים אחרים · <a href="${produced.playlist}">הפלייליסט המלא בספוטיפיי</a></p>
-    <div class="artists">
-    ${produced.artists.map((a) => `<div class="artist-block" dir="rtl">
-      <h3 class="lang-he">${esc(a.name)}</h3>
-      <ul>${a.tracks.map((t) => `<li><span>${esc(t.title)}</span><span class="dim mono">${esc(t.dur)}</span></li>`).join('')}</ul>
-    </div>`).join('')}
-    </div>
-  </section>` : '';
 
 write('music/index.html', layout({
   title: 'Music', active: 'music',
@@ -271,8 +273,7 @@ write('music/index.html', layout({
       <a id="btnDl" href="#" download aria-label="download" title="Download"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></a>
     </div>
   </div>
-  <div class="beat-grid" id="beatGrid"></div>
-  ${producedHtml}`,
+  <div class="beat-grid" id="beatGrid"></div>`,
   extraBody: `<script>
 (function(){
   var TRACKS=${tracksJson};
