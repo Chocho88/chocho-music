@@ -1,0 +1,31 @@
+{
+  "date": "2026-07-05",
+  "tracks": [
+    { "title": "Sax Class",           "file": "sax-class.mp3",           "dur": 123 },
+    { "title": "Mac & Cheese",        "file": "mac-and-cheese.mp3",      "dur": 90 },
+    { "title": "Heaven is a Jungle",  "file": "heaven-is-a-jungle.mp3",  "dur": 124 },
+    { "title": "Could I Be",          "file": "could-i-be.mp3",          "dur": 141 },
+    { "title": "See Me",              "file": "see-me.mp3",              "dur": 212 },
+    { "title": "Afro Balafon",        "file": "afro-balafon.mp3",        "dur": 55 },
+    { "title": "Happy Now",           "file": "happy-now.mp3",           "dur": 103 },
+    { "title": "handsupnow",          "file": "handsupnow.mp3",          "dur": 115 },
+    { "title": "Playstation in 1999", "file": "playstation-in-1999.mp3", "dur": 114 },
+    { "title": "Ensalada",            "file": "ensalada.mp3",            "dur": 226 },
+    { "title": "Nice Day",            "file": "nice-day.mp3",            "dur": 205 },
+    { "title": "Beautiful Dreamer",   "file": "beautiful-dreamer.mp3",   "dur": 78 },
+    { "title": "Sleaz",               "file": "sleaz.mp3",               "dur": 41 },
+    { "title": "Los Mosqueteros",     "file": "los-mosqueteros.mp3",     "dur": 211 },
+    { "title": "Fine Young Animal",   "file": "fine-young-animal.mp3",   "dur": 103 },
+    { "title": "1988",                "file": "1988.mp3",                "dur": 166 },
+    { "title": "Elegant Tribe",       "file": "elegant-tribe.mp3",       "dur": 145 },
+    { "title": "Soul Signs",          "file": "soul-signs.mp3",          "dur": 121 },
+    { "title": "Momentito",           "file": "momentito.mp3",           "dur": 56 },
+    { "title": "OMG",                 "file": "omg.mp3",                 "dur": 96 },
+    { "title": "Luxurious Wait",      "file": "luxurious-wait.mp3",      "dur": 96 },
+    { "title": "Tea & Koto",          "file": "tea-and-koto.mp3",        "dur": 189 },
+    { "title": "Way U",               "file": "way-u.mp3",               "dur": 67 },
+    { "title": "Smoke",               "file": "smoke.mp3",               "dur": 68 },
+    { "title": "Guitar Pads",         "file": "guitar-pads.mp3",         "dur": 261 },
+    { "title": "Sway",                "file": "sway.mp3",                "dur": 120 }
+  ]
+}
