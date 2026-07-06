@@ -4,29 +4,29 @@
     {
       "name": "עידו ברהום",
       "tracks": [
-        { "title": "היא יודעת עלי", "dur": "2:19" },
-        { "title": "תכף אדמיין", "dur": "2:55" },
-        { "title": "לבריאות כפרה עליך", "dur": "1:50" },
-        { "title": "שיר של רנדי ניומן 2", "dur": "1:48" },
-        { "title": "ניתקנו", "dur": "3:01" },
-        { "title": "תחושה", "dur": "2:55" },
-        { "title": "לאחותי הקטנה", "dur": "3:19" }
+        { "title": "היא יודעת עלי", "id": "2KqkxxFe4AZc2gGzFLzDCm" },
+        { "title": "תכף אדמיין", "id": "3r6zGxtIFFdXBIpQAYyMDT" },
+        { "title": "לבריאות כפרה עליך", "id": "5wPgwDmn8G2zTr9J99BxF0" },
+        { "title": "שיר של רנדי ניומן 2", "id": "09uNMIcsUzUA2hU5QOIjMl" },
+        { "title": "ניתקנו", "id": "0IHYz2cGsN8kmvQGXffdBo" },
+        { "title": "תחושה", "id": "5u6Mg0eYkZtUZfH0DRFcqI" },
+        { "title": "לאחותי הקטנה", "id": "0l5mU1oyHJxmyIMGxTNJFw" }
       ]
     },
     {
       "name": "ג'וני קיש",
       "tracks": [
-        { "title": "אפילו כשקר", "dur": "3:48" },
-        { "title": "המילים הנכונות", "dur": "3:25" },
-        { "title": "תוותר", "dur": "2:47" }
+        { "title": "אפילו כשקר", "id": "15uSS7RIXSnhVt1kXcBCyT" },
+        { "title": "המילים הנכונות", "id": "2ccnIMeXItYyk1W9GMOJmx" },
+        { "title": "תוותר", "id": "2WX5SJmBuqg18aRIofue9A" }
       ]
     },
     {
       "name": "Chocho",
       "tracks": [
-        { "title": "יותם - מתגעגע לשרונה", "dur": "2:48" },
-        { "title": "רעותא - רגעים של אמת", "dur": "3:00" },
-        { "title": "אהבה אסורה (עם דניאל איל)", "dur": "3:21" }
+        { "title": "יותם - מתגעגע לשרונה", "id": "045ILtCatGFQIHQ8F629ZZ" },
+        { "title": "רעותא - רגעים של אמת", "id": "2xLRRfwi5cLsico8JNwStk" },
+        { "title": "אהבה אסורה (עם דניאל איל)", "id": "3xPVFMBlnukFeUjPbbqLTD" }
       ]
     }
   ]
