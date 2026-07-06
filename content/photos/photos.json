@@ -1,0 +1,18 @@
+[
+  { "file": "miss-liberty.jpg",        "tags": ["NY"],            "alt": "Girl in a Statue of Liberty crown at a hot dog stand", "date": "2026-07-07" },
+  { "file": "manhattan-night.jpg",     "tags": ["NY"],            "alt": "Manhattan skyline at night, Empire State in red", "date": "2026-07-07" },
+  { "file": "williamsburg-bridge.jpg", "tags": ["NY"],            "alt": "Williamsburg Bridge at dusk", "date": "2026-07-07" },
+  { "file": "joes-pizza.jpg",          "tags": ["NY", "Food"],    "alt": "Joe's Pizza corner at dusk", "date": "2026-07-07" },
+  { "file": "bagel-lox.jpg",           "tags": ["NY", "Food"],    "alt": "Bagel with lox, dill and red onion", "date": "2026-07-07" },
+  { "file": "sheep-meadow.jpg",        "tags": ["NY"],            "alt": "Sheep Meadow, Central Park", "date": "2026-07-07" },
+  { "file": "central-park-pond.jpg",   "tags": ["NY"],            "alt": "By the pond, Central Park", "date": "2026-07-07" },
+  { "file": "manhattan-day.jpg",       "tags": ["NY"],            "alt": "Manhattan from across the Hudson", "date": "2026-07-07" },
+  { "file": "squirrel.jpg",            "tags": ["NY"],            "alt": "Squirrel climbing a tree", "date": "2026-07-07" },
+  { "file": "track-toss.jpg",          "tags": ["NY"],            "alt": "Tennis ball toss on the running track", "date": "2026-07-07" },
+  { "file": "skate-tlv-01.jpg",        "tags": ["TLV", "Skate"],  "alt": "Skater on a box, Tel Aviv museum plaza", "date": "2026-07-07" },
+  { "file": "skate-tlv-02.jpg",        "tags": ["TLV", "Skate"],  "alt": "Backside tailslide by the glass wall", "date": "2026-07-07" },
+  { "file": "skate-tlv-03.jpg",        "tags": ["TLV", "Skate"],  "alt": "Grinding the ledge, white shirt", "date": "2026-07-07" },
+  { "file": "andy-in-the-field.jpg",   "tags": ["Andy"],          "alt": "Andy in the field", "date": "2026-07-07" },
+  { "file": "balcony-blanket-01.jpg",  "tags": ["Family"],        "alt": "Balcony, blanket, laughter", "date": "2026-07-07" },
+  { "file": "balcony-blanket-02.jpg",  "tags": ["Family"],        "alt": "Balcony, blanket, take two", "date": "2026-07-07" }
+]
