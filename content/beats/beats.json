@@ -2,6 +2,12 @@
   "date": "2026-07-07",
   "tracks": [
     {
+      "title": "WAR AGAIN",
+      "file": "war-again.mp3",
+      "dur": 248,
+      "cover": "covers/war-again.jpg"
+    },
+    {
       "title": "Enshitification",
       "file": "enshitification.mp3",
       "dur": 118,
