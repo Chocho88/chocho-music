@@ -70,6 +70,7 @@
   <button data-t="photo">Photo</button>
   <button data-t="note">Note</button>
   <button data-t="covers">Covers</button>
+  <button data-t="edit">Edit</button>
 </div>
 
 <form class="pform on" id="f-beat" hidden>
@@ -99,6 +100,21 @@
   <p class="hint">Tap a beat to give it a cover. Images are auto-squared. (Rotate / filters / text overlay - coming next.)</p>
   <ul class="cover-list" id="coverList"></ul>
   <input type="file" id="coverPick" accept="image/*" hidden>
+</div>
+
+<div class="pform" id="f-edit" hidden>
+  <p class="hint">Super admin. Every text and data file on the site. Edits go live in ~1 minute.
+  Pages and projects are markdown: the part between the two <b>---</b> lines is settings
+  (title, title_he, order...), the text below is the page. <b>&lt;!--he--&gt;</b> separates English from Hebrew.
+  The .json files are the beats / photos / productions databases - mind the commas.</p>
+  <div id="editBrowser"></div>
+  <div id="editPane" hidden>
+    <label id="editPath" style="font-weight:700"></label>
+    <textarea id="editArea" dir="auto" style="min-height:340px; font-family: ui-monospace, Menlo, monospace; font-size:.85rem; line-height:1.5"></textarea>
+    <button type="button" class="go" id="goSave">Save changes</button>
+    <button type="button" class="go" id="goBack" style="background:none;color:var(--ink);border:1px solid var(--hair)">← Back to files</button>
+    <button type="button" class="go" id="goDelete" style="background:none;color:var(--dim);border:1px dashed var(--dim)">Delete this file</button>
+  </div>
 </div>
 
 <p id="status"></p>
@@ -131,10 +147,11 @@
     b.addEventListener('click',function(){
       document.querySelectorAll('#ptabs button').forEach(function(x){x.classList.remove('on');});
       b.classList.add('on');
-      ['beat','photo','note','covers'].forEach(function(t){
+      ['beat','photo','note','covers','edit'].forEach(function(t){
         var el=$('f-'+t); el.classList.toggle('on', t===b.dataset.t); el.hidden = t!==b.dataset.t;
       });
       if(b.dataset.t==='covers') loadCovers();
+      if(b.dataset.t==='edit') loadBrowser();
     });
   });
 
@@ -336,6 +353,83 @@
       status('Cover saved. Live in ~1 minute.');
       loadCovers();
     }catch(e){ status('Error: '+e.message); }
+  });
+
+  /* ---- edit: super admin over all content ---- */
+  var editSha=null, editFile=null;
+  var GROUPS=[
+    {label:'Pages (about, artlist)', dir:'content/pages'},
+    {label:'Projects', dir:'content/projects'},
+    {label:'Notes', dir:'content/notes'},
+    {label:'Data (beats, productions, photos)', dirs:['content/beats','content/photos']}
+  ];
+  async function listDir(dir){
+    var r=await gh(dir);
+    if(!r.ok) return [];
+    var items=await r.json();
+    return items.filter(function(f){ return f.type==='file' && /\.(md|json)$/.test(f.name); });
+  }
+  async function loadBrowser(){
+    status('Loading files...');
+    var box=$('editBrowser'); box.innerHTML='';
+    $('editPane').hidden=true; box.hidden=false;
+    try{
+      for(var g=0; g<GROUPS.length; g++){
+        var group=GROUPS[g];
+        var dirs=group.dirs||[group.dir];
+        var files=[];
+        for(var d=0; d<dirs.length; d++){ files=files.concat(await listDir(dirs[d])); }
+        if(!files.length) continue;
+        var h=document.createElement('label'); h.textContent=group.label; box.appendChild(h);
+        var ul=document.createElement('ul'); ul.className='cover-list';
+        files.forEach(function(f){
+          var li=document.createElement('li');
+          li.innerHTML='<span class="t"></span><button>Edit</button>';
+          li.querySelector('.t').textContent=f.name;
+          li.querySelector('button').addEventListener('click',function(){ openFile(f.path); });
+          ul.appendChild(li);
+        });
+        box.appendChild(ul);
+      }
+      status('');
+    }catch(e){ status('Error: '+e.message); }
+  }
+  async function openFile(path){
+    status('Loading '+path+'...');
+    try{
+      var f=await getFile(path);
+      editSha=f.sha; editFile=path;
+      $('editArea').value=decodeURIComponent(escape(atob(f.content.replace(/\n/g,''))));
+      $('editPath').textContent=path;
+      $('editBrowser').hidden=true; $('editPane').hidden=false;
+      status('');
+    }catch(e){ status('Error: '+e.message); }
+  }
+  $('goBack').addEventListener('click',function(){ loadBrowser(); });
+  $('goSave').addEventListener('click', async function(){
+    if(!editFile) return;
+    this.disabled=true;
+    try{
+      if(/\.json$/.test(editFile)) JSON.parse($('editArea').value); // validate json before saving
+      status('Saving...');
+      var res=await putFile(editFile, b64utf8($('editArea').value), 'Edit: '+editFile, editSha);
+      editSha=res.content.sha;
+      status('Saved. Live in ~1 minute.');
+    }catch(e){ status(/JSON/.test(e.name||'')||e instanceof SyntaxError ? 'Not saved - invalid JSON: '+e.message : 'Error: '+e.message); }
+    this.disabled=false;
+  });
+  $('goDelete').addEventListener('click', async function(){
+    if(!editFile) return;
+    if(!confirm('Delete '+editFile+' from the site? This cannot be undone from here.')) return;
+    this.disabled=true;
+    try{
+      status('Deleting...');
+      var r=await gh(editFile, { method:'DELETE', body: JSON.stringify({ message:'Delete: '+editFile, sha: editSha, branch: BRANCH }) });
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      status('Deleted. Live in ~1 minute.');
+      loadBrowser();
+    }catch(e){ status('Error: '+e.message); }
+    this.disabled=false;
   });
 
   ui();
