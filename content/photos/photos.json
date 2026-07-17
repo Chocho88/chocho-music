@@ -1,18 +1,574 @@
 [
-  { "file": "miss-liberty.jpg",        "tags": ["NY"],            "loc": "New York", "alt": "Girl in a Statue of Liberty crown at a hot dog stand", "date": "2026-07-07" },
-  { "file": "manhattan-night.jpg",     "tags": ["NY"],            "loc": "New York", "alt": "Manhattan skyline at night, Empire State in red", "date": "2026-07-07" },
-  { "file": "williamsburg-bridge.jpg", "tags": ["NY"],            "loc": "New York", "alt": "Williamsburg Bridge at dusk", "date": "2026-07-07" },
-  { "file": "joes-pizza.jpg",          "tags": ["NY", "Food"],    "loc": "New York", "alt": "Joe's Pizza corner at dusk", "date": "2026-07-07" },
-  { "file": "bagel-lox.jpg",           "tags": ["NY", "Food"],    "loc": "New York", "alt": "Bagel with lox, dill and red onion", "date": "2026-07-07" },
-  { "file": "sheep-meadow.jpg",        "tags": ["NY"],            "loc": "Central Park, New York", "alt": "Sheep Meadow, Central Park", "date": "2026-07-07" },
-  { "file": "central-park-pond.jpg",   "tags": ["NY"],            "loc": "Central Park, New York", "alt": "By the pond, Central Park", "date": "2026-07-07" },
-  { "file": "manhattan-day.jpg",       "tags": ["NY"],            "loc": "New York", "alt": "Manhattan from across the river", "date": "2026-07-07" },
-  { "file": "squirrel.jpg",            "tags": ["NY"],            "loc": "New York", "alt": "Squirrel climbing a tree", "date": "2026-07-07" },
-  { "file": "track-toss.jpg",          "tags": ["NY"],            "loc": "Brooklyn, New York", "alt": "Tennis ball toss on the running track", "date": "2026-07-07" },
-  { "file": "skate-tlv-01.jpg",        "tags": ["TLV", "Skate"],  "loc": "Tel Aviv", "alt": "Skater on a box, Tel Aviv museum plaza", "date": "2026-07-07" },
-  { "file": "skate-tlv-02.jpg",        "tags": ["TLV", "Skate"],  "loc": "Tel Aviv", "alt": "Backside tailslide by the glass wall", "date": "2026-07-07" },
-  { "file": "skate-tlv-03.jpg",        "tags": ["TLV", "Skate"],  "loc": "Tel Aviv", "alt": "Grinding the ledge, white shirt", "date": "2026-07-07" },
-  { "file": "andy-in-the-field.jpg",   "tags": ["Andy"],          "loc": "", "alt": "Andy in the field", "date": "2026-07-07" },
-  { "file": "balcony-blanket-01.jpg",  "tags": ["Family"],        "loc": "", "alt": "Balcony, blanket, laughter", "date": "2026-07-07" },
-  { "file": "balcony-blanket-02.jpg",  "tags": ["Family"],        "loc": "", "alt": "Balcony, blanket, take two", "date": "2026-07-07" }
+  {
+    "file": "_dsf2865-mrpfitme.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2851-mrpfivzy-1.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2820-mrpfiy0u-2.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2808-mrpfj0gq-3.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "fxn-2024-12-02-113436-381-mrpfj2gz-4.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_4153-mrpfj4n4-5.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2769-mrpfj7hb-6.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2734-mrpfj9zq-7.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2732-mrpfjc6k-8.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2727-mrpfjegn-9.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2708-mrpfjgpn-10.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "pictlinksaveimagetemp-6-mrpfjij7-11.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2702-mrpfjkpn-12.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2699-mrpfjnc6-13.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_4033-mrpfjpj4-14.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3952-mrpfjs0i-15.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2620-mrpfju7z-16.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2603-mrpfjwwo-17.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2569-mrpfjzhs-18.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2545-mrpfk23f-19.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2542-mrpfk482-20.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "dscf2536-mrpfk6fp-21.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3731-mrpfk85w-22.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_6548-mrpfka5u-23.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2484-mrpfkco2-24.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3618-mrpfkf1v-25.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3603-mrpfkhgn-26.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "dscf2466-mrpfkk0c-27.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3490-mrpfkmgl-28.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3443-mrpfkotb-29.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2439-mrpfkqwn-30.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2421-mrpfktgz-31.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2419-mrpfkvlq-32.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2392-mrpfkxhi-33.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2391-mrpfkzfc-34.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2357-mrpfl1aa-35.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "img_3343-mrpfl3bj-36.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2337-mrpfl5ba-37.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2326-mrpfl7c5-38.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2321-mrpfl9z8-39.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2320-mrpflbwo-40.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2317-mrpfldw5-41.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2313-mrpflfz4-42.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2308-mrpflidg-43.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2301-mrpflkrs-44.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2300-mrpflmvd-45.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "_dsf2280-mrpfloqe-46.jpg",
+    "tags": [
+      "kawaii"
+    ],
+    "loc": "japan, kyoto",
+    "alt": "",
+    "date": "2026-07-17"
+  },
+  {
+    "file": "miss-liberty.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "New York",
+    "alt": "Girl in a Statue of Liberty crown at a hot dog stand",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "manhattan-night.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "New York",
+    "alt": "Manhattan skyline at night, Empire State in red",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "williamsburg-bridge.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "New York",
+    "alt": "Williamsburg Bridge at dusk",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "joes-pizza.jpg",
+    "tags": [
+      "NY",
+      "Food"
+    ],
+    "loc": "New York",
+    "alt": "Joe's Pizza corner at dusk",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "bagel-lox.jpg",
+    "tags": [
+      "NY",
+      "Food"
+    ],
+    "loc": "New York",
+    "alt": "Bagel with lox, dill and red onion",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "sheep-meadow.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "Central Park, New York",
+    "alt": "Sheep Meadow, Central Park",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "central-park-pond.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "Central Park, New York",
+    "alt": "By the pond, Central Park",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "manhattan-day.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "New York",
+    "alt": "Manhattan from across the river",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "squirrel.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "New York",
+    "alt": "Squirrel climbing a tree",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "track-toss.jpg",
+    "tags": [
+      "NY"
+    ],
+    "loc": "Brooklyn, New York",
+    "alt": "Tennis ball toss on the running track",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "skate-tlv-01.jpg",
+    "tags": [
+      "TLV",
+      "Skate"
+    ],
+    "loc": "Tel Aviv",
+    "alt": "Skater on a box, Tel Aviv museum plaza",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "skate-tlv-02.jpg",
+    "tags": [
+      "TLV",
+      "Skate"
+    ],
+    "loc": "Tel Aviv",
+    "alt": "Backside tailslide by the glass wall",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "skate-tlv-03.jpg",
+    "tags": [
+      "TLV",
+      "Skate"
+    ],
+    "loc": "Tel Aviv",
+    "alt": "Grinding the ledge, white shirt",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "andy-in-the-field.jpg",
+    "tags": [
+      "Andy"
+    ],
+    "loc": "",
+    "alt": "Andy in the field",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "balcony-blanket-01.jpg",
+    "tags": [
+      "Family"
+    ],
+    "loc": "",
+    "alt": "Balcony, blanket, laughter",
+    "date": "2026-07-07"
+  },
+  {
+    "file": "balcony-blanket-02.jpg",
+    "tags": [
+      "Family"
+    ],
+    "loc": "",
+    "alt": "Balcony, blanket, take two",
+    "date": "2026-07-07"
+  }
 ]
