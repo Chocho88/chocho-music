@@ -48,6 +48,13 @@ const pages = loadCollection('content/pages', 'page');
 const beats = exists('content/beats/beats.json') ? JSON.parse(read('content/beats/beats.json')) : { date: null, tracks: [] };
 const produced = exists('content/beats/produced.json') ? JSON.parse(read('content/beats/produced.json')) : null;
 const photos = exists('content/photos/photos.json') ? JSON.parse(read('content/photos/photos.json')) : [];
+const site = Object.assign({
+  name: 'Chocho',
+  description: '',
+  hero_title: "Hey, I'm Chocho.\nI make music in Tel-Aviv.",
+  hero_highlight: 'music',
+  hero_sub: "Beats, soundtracks, sonic identities - if it makes a sound, I'm probably into it. This garden grows when I do.",
+}, exists('content/site.json') ? JSON.parse(read('content/site.json')) : {});
 
 /* ---------- wiki-links + backlinks ---------- */
 const linkables = [...notes, ...projects].reduce((m, item) => {
@@ -107,7 +114,7 @@ function nav(active) {
   const noteTree = notes.map((n) => `<a href="${u(`notes/${n.slug}/`)}" class="sub${active === `note:${n.slug}` ? ' active' : ''}">${esc(n.title)}</a>`).join('');
   return `
   <nav class="sidebar" id="sidebar">
-    <a class="site-name" href="${u('')}">Chocho</a>
+    <a class="site-name" href="${u('')}">${esc(site.name)}</a>
     ${link('', 'Home', 'home')}
     ${link('music/', 'Music', 'music')}
     ${link('projects/', 'Music & Sound Projects', 'projects')}
@@ -145,7 +152,8 @@ function layout({ title, active = '', lang = 'en', content, extraHead = '', extr
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}${title === 'Chocho' ? '' : ' · Chocho'}</title>
+<title>${esc(title)}${title === site.name ? '' : ' · ' + esc(site.name)}</title>
+${site.description ? `<meta name="description" content="${esc(site.description)}">` : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
@@ -164,11 +172,20 @@ ${extraBody}
 }
 
 /* ---------- cards feed (home) ---------- */
-function card({ type, href, title, titleHe, date, lang, sub }) {
+function cardMedia(c) {
+  if (c.media && c.media.length) {
+    const imgs = c.media.map((m) => `<img src="${m}" alt="" loading="lazy">`).join('');
+    const tile = c.accentTile ? `<span class="tile-accent">${icons[c.type]}</span>` : '';
+    return `<span class="card-media">${imgs}${tile}</span>`;
+  }
+  return `<span class="card-media hatch"><span class="stamp">${icons[c.type]}</span></span>`;
+}
+function card({ type, href, title, titleHe, date, lang, sub, media, accentTile }) {
   const t = titleHe
     ? `<span class="card-title lang-en i18n i18n-en">${esc(title)}</span><span class="card-title lang-he i18n i18n-he" dir="rtl">${esc(titleHe)}</span>`
     : `<span class="card-title lang-${lang}">${esc(title)}</span>`;
   return `<a class="card" href="${href}" ${lang === 'he' ? 'dir="rtl"' : ''}>
+    ${cardMedia({ type, media, accentTile })}
     <span class="card-type">${icons[type]} ${typeLabel[type]}</span>
     ${t}
     ${sub ? `<span class="card-sub">${esc(sub)}</span>` : ''}
@@ -182,15 +199,23 @@ const feed = [
   ...notes.map((n) => ({ type: 'note', href: u(`notes/${n.slug}/`), title: n.title, date: n.date, lang: n.lang })),
   ...projects.map((p) => ({ type: 'project', href: u(`projects/#${p.slug}`), title: p.title, titleHe: p.titleHe, date: p.date, lang: p.lang })),
   ...(artlistPage ? [{ type: 'project', href: u('artlist/'), title: artlistPage.title, date: artlistPage.date, lang: 'en' }] : []),
-  ...(photos.length ? [{ type: 'photo', href: u('photos/'), title: 'Photos', sub: `${photos.length} pictures`, date: photos[0].date, lang: 'en' }] : []),
-  { type: 'beat', href: u('music/'), title: 'The player', sub: `${beats.tracks.length} beats`, date: beats.date || null, lang: 'en' },
-  ...(exists('content/ai/ai.json') ? [{ type: 'project', href: u('ai/'), title: 'Building with AI', sub: `${JSON.parse(read('content/ai/ai.json')).length} experiments`, date: '2026-07-08', lang: 'en' }] : []),
+  ...(photos.length ? [{ type: 'photo', href: u('photos/'), title: 'Photos', sub: `${photos.length} pictures`, date: photos[0].date, lang: 'en', media: photos.slice(0, 3).map((p) => u(`photos/img/thumb-${p.file}`)) }] : []),
+  { type: 'beat', href: u('music/'), title: 'The player', sub: `${beats.tracks.length} beats`, date: beats.date || null, lang: 'en', media: beats.tracks.filter((t) => t.cover).slice(0, 2).map((t) => u(t.cover)), accentTile: true },
+  ...(exists('content/ai/ai.json') ? [{ type: 'project', href: u('ai/'), title: 'Building with AI', sub: `${JSON.parse(read('content/ai/ai.json')).length} experiments`, date: '2026-07-08', lang: 'en', media: exists('content/ai/img') ? fs.readdirSync('content/ai/img').slice(0, 2).map((f) => u(`ai/img/${f}`)) : [] }] : []),
 ].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
+let heroTitle = esc(site.hero_title).replace(/\n/g, '<br>');
+if (site.hero_highlight) heroTitle = heroTitle.replace(esc(site.hero_highlight), `<span class="hero-mark">${esc(site.hero_highlight)}</span>`);
+
 write('index.html', layout({
-  title: 'Chocho', active: 'home',
+  title: site.name, active: 'home',
   content: `
-  <p class="intro">Chocho Isac Olmer - music producer and audio branding, Tel-Aviv.</p>
+  <div class="hero">
+    <h1 class="hero-title lang-en">${heroTitle}</h1>
+    <p class="hero-sub">${esc(site.hero_sub)}</p>
+    <p class="hero-cta"><a class="btn-primary" href="${u('about/')}">Say hi →</a><a class="btn-ghost" href="${u('music/')}">Hear the beats</a></p>
+  </div>
+  <div class="micro-label"><span>Freshly planted</span></div>
   <div class="cards">${feed.map(card).join('')}</div>`,
 }));
 
@@ -279,7 +304,12 @@ write('music/index.html', layout({
   extraBody: `<script>
 (function(){
   var TRACKS=${tracksJson};
-  var NOTE='<svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>';
+  function ptsStar(n,R,r){var p=[];for(var k=0;k<2*n;k++){var a=Math.PI*k/n-Math.PI/2;var rad=k%2?r:R;p.push((50+rad*Math.cos(a)).toFixed(1)+','+(50+rad*Math.sin(a)).toFixed(1));}return p.join(' ');}
+  function ptsPoly(n,R){var p=[];for(var k=0;k<n;k++){var a=2*Math.PI*k/n-Math.PI/2;p.push((50+R*Math.cos(a)).toFixed(1)+','+(50+R*Math.sin(a)).toFixed(1));}return p.join(' ');}
+  var SHAPES=[{pts:ptsStar(5,46,20)},{ch:'*'},{pts:ptsPoly(6,46)},{ch:'$'},{pts:ptsStar(4,46,15)},{pts:ptsPoly(5,46)},{pts:ptsStar(8,46,34)},{ch:'\u266a'},{pts:ptsPoly(3,48)},{pts:ptsStar(6,46,26)}];
+  function shapeHtml(i,size){var s=SHAPES[i%SHAPES.length];var rot=i%2?8:-8;
+    if(s.pts)return '<span class="beat-shape" style="transform:rotate('+rot+'deg)"><svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'"><polygon points="'+s.pts+'" fill="var(--accent)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></span>';
+    return '<span class="beat-shape glyph" style="transform:rotate('+rot+'deg)'+(s.ch==='*'?';padding-top:.28em':'')+'">'+s.ch+'</span>';}
   var audio=new Audio(); audio.preload='none';
   var cur=0, shuffle=true, repeat='none', order=[];
   var $=function(id){return document.getElementById(id);};
@@ -290,7 +320,7 @@ write('music/index.html', layout({
   TRACKS.forEach(function(t,i){
     var el=document.createElement('button');
     el.className='beat-card';
-    el.innerHTML='<span class="bc-cover">'+(t.cover?'<img loading="lazy" alt="" src="'+t.cover+'">':NOTE)+'<span class="bc-play"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span></span>'+
+    el.innerHTML='<span class="bc-cover">'+(t.cover?'<img loading="lazy" alt="" src="'+t.cover+'">':shapeHtml(i,74))+'<span class="bc-play"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span></span>'+
       '<span class="bc-title lang-en"></span><span class="bc-dur dim mono">'+fmt(t.dur)+'</span>';
     el.querySelector('.bc-title').textContent=t.title;
     el.addEventListener('click',function(){ load(i); play(); });
@@ -299,7 +329,7 @@ write('music/index.html', layout({
   function load(i){ cur=i; var t=TRACKS[i];
     audio.src=t.file;
     $('npTitle').textContent=t.title;
-    $('npCover').innerHTML = t.cover ? '<img alt="" src="'+t.cover+'">' : NOTE;
+    $('npCover').innerHTML = t.cover ? '<img alt="" src="'+t.cover+'">' : shapeHtml(i,38);
     $('npDur').textContent=fmt(t.dur); $('npCur').textContent='0:00';
     $('npFill').style.width='0%';
     $('btnDl').href=t.file;
@@ -325,8 +355,8 @@ write('music/index.html', layout({
   audio.addEventListener('timeupdate',function(){ $('npCur').textContent=fmt(audio.currentTime);
     if(audio.duration) $('npFill').style.width=(audio.currentTime/audio.duration*100)+'%'; });
   audio.addEventListener('ended',function(){ if(repeat==='track'){ audio.currentTime=0; play(); } else step(1); });
-  audio.addEventListener('play',function(){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; });
-  audio.addEventListener('pause',function(){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; });
+  audio.addEventListener('play',function(){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; document.body.classList.add('is-playing'); });
+  audio.addEventListener('pause',function(){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; document.body.classList.remove('is-playing'); });
   buildOrder();
   var start=order[0];
   try{ var s=parseInt(localStorage.getItem('gardenTrack')); if(!isNaN(s)&&TRACKS[s]) start=s; }catch(e){}

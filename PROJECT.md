@@ -11,10 +11,15 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - Publish app at /publish.html — token per device (fine-grained PAT, Contents R/W on this repo only)
 - `site/publish.html` — in-browser publish/edit app (token-gated)
 
-## Current state (2026-07-17)
-- ChoHog re-skin shipped: cream/olive palette, sun accent, dot-shaped beat covers
-- Edit tab in publish app: full content editor with save/delete
-- Latest beats added: Enshitification, WAR AGAIN
+## Current state (2026-07-18)
+- Live on https://chocho.lol with https enforced; publish → live in ~1 min
+- Publish app tabs: Beat / Photo / Note / Covers / Titles / Edit (+ Site settings via content/site.json)
+- Content: ~29 beats, 63 photos, projects, "Building with AI" section (incl. Manhattan Math calculator)
+- Homepage: ChoHog hero ("Hey, I'm Chocho...") — editable via content/site.json (name, hero, description) in the publish Edit tab
+- Parked: `player-preview-assets` branch — 7 tracks hosted, player preview not wired into the site yet
+
+## Incidents & lessons
+- 2026-07-18: a parallel chat session overwrote `site/style.css` with a stale pre-ChoHog copy ("AI card styles" commit) → design reverted live. Fixed by restoring ChoHog css + re-appending the .ai-* block. LESSON: multiple sessions push to main — always `git fetch` and diff against `origin/main` before pushing, especially for `site/style.css` and `build.js`.
 
 ## Decisions
 - 2026-07-17: moved off the dark design baseline for this project — ChoHog uses a cream/olive light palette on purpose
