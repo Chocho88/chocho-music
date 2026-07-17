@@ -82,7 +82,32 @@ function resolveWiki(md, self) {
 const resolveYt = (md) => md.replace(/\{\{yt\s+([\w-]+)\}\}/g,
   (_, id) => `<div class="yt"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="video" loading="lazy" allowfullscreen frameborder="0"></iframe></div>`);
 
-const renderMd = (md, self) => marked.parse(resolveYt(resolveWiki(md, self)));
+// obsidian-style callouts: "> [!tip] Title" blockquotes become styled boxes
+const CALLOUT_TYPES = ['tip', 'warning', 'idea', 'note'];
+const callouts = (html) => html.replace(
+  /<blockquote>\s*<p>\[!(\w+)\]\s*([^<\n]*)\n?([\s\S]*?)<\/blockquote>/g,
+  (m, type, title, rest) => {
+    type = type.toLowerCase();
+    if (!CALLOUT_TYPES.includes(type)) type = 'note';
+    rest = rest.replace(/^<\/p>\s*/, '').trim();
+    const body = rest ? (rest.startsWith('<') ? rest : `<p>${rest}`) : '';
+    return `<div class="callout callout-${type}"><p class="co-title">${title.trim() || type}</p>${body}</div>`;
+  });
+
+const renderMd = (md, self) => callouts(marked.parse(resolveYt(resolveWiki(md, self))));
+
+// plain-text excerpt for hover previews + the garden map
+function excerptOf(md) {
+  return String(md || '')
+    .replace(/\{\{yt[^}]*\}\}/g, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, t, l) => l || t)
+    .replace(/^>\s*\[!\w+\]\s*/gm, '')
+    .replace(/[#>*_`~]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim().slice(0, 150);
+}
 
 // bilingual article body: both languages in the page, toggle shows one
 function renderBody(item) {
@@ -122,12 +147,13 @@ function nav(active) {
     ${link('ai/', 'Building with AI', 'ai')}
     ${link('photos/', 'Photos', 'photos')}
     <details ${active.startsWith('note') ? 'open' : ''}><summary>${link('notes/', 'Notes', 'notes')}</summary>${noteTree || '<span class="sub empty">-</span>'}</details>
+    ${link('garden/', 'Garden Map', 'garden')}
     ${link('about/', 'About', 'about')}
     <button id="langToggle" class="lang-toggle" aria-label="switch content language">עב</button>
   </nav>`;
 }
 
-const langScript = `<script>
+const langScript = `<script data-keep>
 (function(){
   var KEY='gardenLang';
   function apply(l){
@@ -154,19 +180,20 @@ function layout({ title, active = '', lang = 'en', content, extraHead = '', extr
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}${title === site.name ? '' : ' · ' + esc(site.name)}</title>
 ${site.description ? `<meta name="description" content="${esc(site.description)}">` : ''}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="${u('style.css')}">
+<link rel="preload" href="${u('fonts/Recoleta-Black.woff2')}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="${u('fonts/OpenSauceSans-Regular.woff2')}" as="font" type="font/woff2" crossorigin>
+<script defer src="${u('app.js')}"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='13' font-size='14'%3E%E2%9D%80%3C/text%3E%3C/svg%3E">
 ${extraHead}
 </head>
-<body>
+<body data-prefix="${PREFIX}">
 <button class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="menu">☰</button>
 ${nav(active)}
+<div class="sb-handle" aria-hidden="true"></div>
 <main>${content}</main>
 ${langScript}
-${extraBody}
+${extraBody ? `<div class="page-extra">${extraBody}</div>` : ''}
 </body>
 </html>`;
 }
@@ -174,7 +201,7 @@ ${extraBody}
 /* ---------- cards feed (home) ---------- */
 function cardMedia(c) {
   if (c.media && c.media.length) {
-    const imgs = c.media.map((m) => `<img src="${m}" alt="" loading="lazy">`).join('');
+    const imgs = c.media.map((m) => `<img src="${m}" alt="" loading="lazy" decoding="async">`).join('');
     const tile = c.accentTile ? `<span class="tile-accent">${icons[c.type]}</span>` : '';
     return `<span class="card-media">${imgs}${tile}</span>`;
   }
@@ -300,6 +327,7 @@ write('music/index.html', layout({
       <a id="btnDl" href="#" download aria-label="download" title="Download"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></a>
     </div>
   </div>
+  <div class="size-ctl"><label for="beatSize">Tile size</label><input type="range" id="beatSize" min="110" max="260" step="5" value="150"><span class="hint">pinch / ⌘ scroll</span></div>
   <div class="beat-grid" id="beatGrid"></div>`,
   extraBody: `<script>
 (function(){
@@ -310,7 +338,7 @@ write('music/index.html', layout({
   function shapeHtml(i,size){var s=SHAPES[i%SHAPES.length];var rot=i%2?8:-8;
     if(s.pts)return '<span class="beat-shape" style="transform:rotate('+rot+'deg)"><svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'"><polygon points="'+s.pts+'" fill="var(--accent)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></span>';
     return '<span class="beat-shape glyph" style="transform:rotate('+rot+'deg)'+(s.ch==='*'?';padding-top:.28em':'')+'">'+s.ch+'</span>';}
-  var audio=new Audio(); audio.preload='none';
+  var audio=window.gardenAudio||(window.gardenAudio=new Audio()); audio.preload='none';
   var cur=0, shuffle=true, repeat='none', order=[];
   var $=function(id){return document.getElementById(id);};
   var fmt=function(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
@@ -326,14 +354,18 @@ write('music/index.html', layout({
     el.addEventListener('click',function(){ load(i); play(); });
     grid.appendChild(el);
   });
-  function load(i){ cur=i; var t=TRACKS[i];
-    audio.src=t.file;
+  function sync(i){ cur=i; var t=TRACKS[i];
+    window.gardenNow=t.title;
+    if(!$('npTitle')) return;
     $('npTitle').textContent=t.title;
-    $('npCover').innerHTML = t.cover ? '<img alt="" src="'+t.cover+'">' : shapeHtml(i,38);
-    $('npDur').textContent=fmt(t.dur); $('npCur').textContent='0:00';
-    $('npFill').style.width='0%';
+    $('npCover').innerHTML = t.cover ? '<img alt="" decoding="async" src="'+t.cover+'">' : shapeHtml(i,38);
+    $('npDur').textContent=fmt(t.dur);
     $('btnDl').href=t.file;
     [].forEach.call(grid.children,function(c,j){ c.classList.toggle('active', j===i); });
+  }
+  function load(i){ sync(i); var t=TRACKS[i];
+    audio.src=t.file;
+    if($('npCur')){ $('npCur').textContent='0:00'; $('npFill').style.width='0%'; }
     try{ localStorage.setItem('gardenTrack', i); }catch(e){}
   }
   function play(){ audio.play().catch(function(){}); }
@@ -352,15 +384,26 @@ write('music/index.html', layout({
   });
   $('npBar').addEventListener('click',function(e){ var r=this.getBoundingClientRect();
     if(audio.duration) audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration; });
-  audio.addEventListener('timeupdate',function(){ $('npCur').textContent=fmt(audio.currentTime);
-    if(audio.duration) $('npFill').style.width=(audio.currentTime/audio.duration*100)+'%'; });
-  audio.addEventListener('ended',function(){ if(repeat==='track'){ audio.currentTime=0; play(); } else step(1); });
-  audio.addEventListener('play',function(){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; document.body.classList.add('is-playing'); });
-  audio.addEventListener('pause',function(){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; document.body.classList.remove('is-playing'); });
+  // handlers ASSIGNED (not added): re-visiting the page replaces them instead of stacking
+  audio.ontimeupdate=function(){ if(!$('npCur')) return; $('npCur').textContent=fmt(audio.currentTime);
+    if(audio.duration) $('npFill').style.width=(audio.currentTime/audio.duration*100)+'%'; };
+  audio.onended=function(){ if(repeat==='track'){ audio.currentTime=0; play(); } else step(1); };
+  audio.onplay=function(){ if($('icoPlay')){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; } };
+  audio.onpause=function(){ if($('icoPlay')){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; } };
   buildOrder();
-  var start=order[0];
-  try{ var s=parseInt(localStorage.getItem('gardenTrack')); if(!isNaN(s)&&TRACKS[s]) start=s; }catch(e){}
-  load(start);
+  // came back while music is loaded? adopt the live track instead of resetting it
+  var adopted=-1;
+  if(audio.src){ var path=decodeURI(audio.src).replace(location.origin,'');
+    for(var k=0;k<TRACKS.length;k++){ if(TRACKS[k].file===path){ adopted=k; break; } } }
+  if(adopted>=0){ sync(adopted);
+    if($('npCur')){ $('npCur').textContent=fmt(audio.currentTime);
+      if(audio.duration) $('npFill').style.width=(audio.currentTime/audio.duration*100)+'%'; }
+    if(!audio.paused && $('icoPlay')){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; }
+  } else {
+    var start=order[0];
+    try{ var s=parseInt(localStorage.getItem('gardenTrack')); if(!isNaN(s)&&TRACKS[s]) start=s; }catch(e){}
+    load(start);
+  }
 })();
 </script>`,
 }));
@@ -423,8 +466,9 @@ function photosPage(sel) {
   return layout({
     title: sel ? `#${sel}` : 'Photos', active: 'photos',
     content: `<h1 class="lang-en">Photos</h1>${tagBar}
+    <div class="size-ctl"><label for="photoSize">Flow</label><input type="range" id="photoSize" min="160" max="420" step="10" value="250"><span class="hint">pinch / ⌘ scroll</span></div>
     ${list.length ? `<div class="photo-stream">
-      ${list.map((p) => `<a href="${u(`photos/img/${p.file}`)}"><img src="${u(`photos/img/thumb-${p.file}`)}" alt="${esc(p.alt || '')}" loading="lazy"></a>`).join('')}
+      ${list.map((p) => `<a href="${u(`photos/img/${p.file}`)}"><img src="${u(`photos/img/thumb-${p.file}`)}" alt="${esc(p.alt || '')}" loading="lazy" decoding="async"></a>`).join('')}
     </div>` : '<p class="dim">Nothing developed yet.</p>'}`,
     extraBody: lightbox.replace('${photosJson}', listJson).replace(/var P=.*?;/, `var P=${listJson};`),
   });
@@ -454,7 +498,7 @@ if (aiProjects.length) {
     <p class="dim i18n i18n-he" dir="rtl">דברים שבניתי בשיחה עם מכונה. אבות־טיפוס, כלים, צעצועים.</p>
     <div class="ai-grid">
       ${aiProjects.map((p) => `<a class="ai-card" href="${p.internal ? u(p.url) : p.url}" ${p.internal ? '' : 'target="_blank" rel="noopener"'}>
-        <span class="ai-shot">${p.img ? `<img src="${u(`ai/img/${p.img}`)}" alt="${esc(p.title)}" loading="lazy">` : '<span class="ai-noshot">' + esc(p.title) + '</span>'}</span>
+        <span class="ai-shot">${p.img ? `<img src="${u(`ai/img/${p.img}`)}" alt="${esc(p.title)}" loading="lazy" decoding="async">` : '<span class="ai-noshot">' + esc(p.title) + '</span>'}</span>
         <span class="ai-body">
           <span class="ai-title lang-en">${esc(p.title)}</span>
           <span class="ai-desc i18n i18n-en">${esc(p.desc)}</span>
@@ -475,12 +519,159 @@ if (exists('site/publish.html')) {
   write('publish/index.html', read('site/publish.html').replaceAll('{{PREFIX}}', PREFIX));
 }
 
+/* ---------- garden index (hover previews) + garden map ---------- */
+const gardenNodes = [
+  ...beats.tracks.map((t, i) => ({ id: `beat-${i}`, type: 'beat', title: t.title, url: u('music/'), lang: 'en',
+    excerpt: t.dur ? `${Math.floor(t.dur / 60)}:${String(Math.round(t.dur) % 60).padStart(2, '0')}` : '' })),
+  ...aiProjects.map((p, i) => ({ id: `ai-${i}`, type: 'ai', title: p.title, url: p.internal ? u(p.url) : p.url, lang: 'en',
+    excerpt: excerptOf(p.desc), date: p.date || '' })),
+  ...notes.map((n) => ({ id: n.slug, type: 'note', title: n.title, url: u(`notes/${n.slug}/`), lang: n.lang,
+    excerpt: excerptOf(n.body), date: fmtDate(n.date) })),
+  ...projects.map((p) => ({ id: p.slug, type: 'project', title: p.title, url: u(`projects/#${p.slug}`), lang: p.lang,
+    excerpt: excerptOf(p.body), date: fmtDate(p.date) })),
+  { id: 'hub-home', type: 'hub', title: site.name, url: u(''), lang: 'en', excerpt: excerptOf(site.hero_sub) },
+  { id: 'hub-music', type: 'hub', title: 'Music', url: u('music/'), lang: 'en', excerpt: `${beats.tracks.length} beats in the player` },
+  { id: 'hub-projects', type: 'hub', title: 'Projects', url: u('projects/'), lang: 'en', excerpt: `${projects.length} music & sound projects` },
+  { id: 'hub-notes', type: 'hub', title: 'Notes', url: u('notes/'), lang: 'en', excerpt: `${notes.length} notes planted` },
+  { id: 'hub-photos', type: 'hub', title: 'Photos', url: u('photos/'), lang: 'en', excerpt: `${photos.length} pictures` },
+  { id: 'hub-ai', type: 'hub', title: 'Building with AI', url: u('ai/'), lang: 'en', excerpt: `${aiProjects.length} experiments` },
+  { id: 'hub-about', type: 'hub', title: 'About', url: u('about/'), lang: 'en', excerpt: '' },
+];
+const gardenEdges = [
+  ...['music', 'projects', 'notes', 'photos', 'ai', 'about'].map((h) => ['hub-home', `hub-${h}`]),
+  ...beats.tracks.map((_, i) => ['hub-music', `beat-${i}`]),
+  ...aiProjects.map((_, i) => ['hub-ai', `ai-${i}`]),
+  ...notes.map((n) => ['hub-notes', n.slug]),
+  ...projects.map((p) => ['hub-projects', p.slug]),
+];
+for (const [target, sources] of backlinks) {
+  for (const s of sources) if (s.slug !== target) gardenEdges.push([s.slug, target]);
+}
+write('garden.json', JSON.stringify({ nodes: gardenNodes, edges: gardenEdges }));
+
+write('garden/index.html', layout({
+  title: 'Garden Map', active: 'garden',
+  content: `<h1 class="lang-en">Garden Map</h1>
+  <p class="dim i18n i18n-en">Everything planted here, and how it connects. Drag the dots. Click to visit.</p>
+  <p class="dim i18n i18n-he" dir="rtl">כל מה ששתול כאן, ואיך הכל מתחבר. גררו את הנקודות. לחצו כדי לבקר.</p>
+  <div class="garden-wrap"><canvas id="gardenMap"></canvas><span class="garden-hint">drag · click · it's alive</span></div>
+  <div class="garden-legend">
+    <span><i style="background:var(--accent)"></i> beats</span>
+    <span><i style="background:var(--chip-blue)"></i> notes</span>
+    <span><i style="background:var(--chip-red)"></i> projects</span>
+    <span><i style="background:var(--surface)"></i> pages</span>
+  </div>`,
+  extraBody: `<script>
+(function(){
+  var DATA=${JSON.stringify({ nodes: gardenNodes.map((n) => ({ id: n.id, type: n.type, title: n.title, url: n.url })), edges: gardenEdges })};
+  var cv=document.getElementById('gardenMap'); if(!cv) return;
+  var wrap=cv.parentElement, ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1;
+  var W=0,H=0;
+  function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  var N=DATA.nodes.map(function(n,i){ return Object.assign({}, n, {
+    x:0.5+0.42*Math.cos(i*2.399), y:0.5+0.42*Math.sin(i*2.399), vx:0, vy:0,
+    r: n.type==='hub' ? (n.id==='hub-home'?17:13) : 7
+  });});
+  var byId={}; N.forEach(function(n){ byId[n.id]=n; });
+  var E=DATA.edges.filter(function(e){ return byId[e[0]]&&byId[e[1]]; })
+                  .map(function(e){ return [byId[e[0]], byId[e[1]]]; });
+  var deg={}; E.forEach(function(e){ deg[e[0].id]=(deg[e[0].id]||0)+1; deg[e[1].id]=(deg[e[1].id]||0)+1; });
+  function size(){ var r=wrap.getBoundingClientRect(); W=r.width; H=r.height;
+    cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    N.forEach(function(n){ if(n.px===undefined){ n.px=n.x*W; n.py=n.y*H; } });
+    alpha=Math.max(alpha,0.3); kick();
+  }
+  var alpha=1, drag=null, hover=null, raf=null;
+  function tick(){
+    var i,j,a,b,dx,dy,dist,f;
+    for(i=0;i<N.length;i++){ a=N[i];
+      for(j=i+1;j<N.length;j++){ b=N[j];
+        dx=a.px-b.px; dy=a.py-b.py; dist=Math.max(12,Math.hypot(dx,dy));
+        if(dist<160){ f=900/(dist*dist); a.vx+=dx/dist*f; a.vy+=dy/dist*f; b.vx-=dx/dist*f; b.vy-=dy/dist*f; }
+      }
+      a.vx+=(W/2-a.px)*0.0012; a.vy+=(H/2-a.py)*0.0012;
+    }
+    E.forEach(function(e){ a=e[0]; b=e[1];
+      dx=b.px-a.px; dy=b.py-a.py; dist=Math.max(1,Math.hypot(dx,dy));
+      var rest=a.type==='hub'&&b.type==='hub'?150: a.type==='hub'||b.type==='hub'?70:110;
+      f=(dist-rest)*0.004;
+      a.vx+=dx/dist*f*2; a.vy+=dy/dist*f*2; b.vx-=dx/dist*f*2; b.vy-=dy/dist*f*2;
+    });
+    N.forEach(function(n){
+      if(drag&&drag.n===n) return;
+      n.vx*=0.86; n.vy*=0.86;
+      n.px+=n.vx*alpha*2.2; n.py+=n.vy*alpha*2.2;
+      n.px=Math.max(n.r+4,Math.min(W-n.r-4,n.px));
+      n.py=Math.max(n.r+4,Math.min(H-n.r-4,n.py));
+    });
+    alpha*=0.995;
+  }
+  function draw(){
+    var ink=css('--ink'), hair=css('--hair'), surface=css('--surface'), paper=css('--paper');
+    var col={beat:css('--accent'), note:css('--chip-blue'), project:css('--chip-red'), ai:css('--chip-red'), hub:surface};
+    ctx.clearRect(0,0,W,H);
+    ctx.lineWidth=1.5; ctx.strokeStyle=hair;
+    E.forEach(function(e){
+      ctx.globalAlpha=(hover&&(e[0]===hover||e[1]===hover))?1:0.55;
+      if(hover&&(e[0]===hover||e[1]===hover)){ ctx.strokeStyle=ink; ctx.lineWidth=2; } else { ctx.strokeStyle=hair; ctx.lineWidth=1.5; }
+      ctx.beginPath(); ctx.moveTo(e[0].px,e[0].py); ctx.lineTo(e[1].px,e[1].py); ctx.stroke();
+    });
+    ctx.globalAlpha=1;
+    N.forEach(function(n){
+      var r=n===hover?n.r+2:n.r;
+      ctx.beginPath(); ctx.arc(n.px+2.5,n.py+2.5,r,0,7); ctx.fillStyle=ink; ctx.fill(); // hard shadow
+      ctx.beginPath(); ctx.arc(n.px,n.py,r,0,7);
+      ctx.fillStyle=col[n.type]||surface; ctx.fill();
+      ctx.lineWidth=2; ctx.strokeStyle=ink; ctx.stroke();
+    });
+    ctx.font='600 10px "IBM Plex Mono", monospace'; ctx.textAlign='center';
+    N.forEach(function(n){
+      if(n.type!=='hub'&&n!==hover) return;
+      var label=n.title.length>26?n.title.slice(0,25)+'…':n.title;
+      ctx.font=(n.type==='hub'?'700 12px':'600 10.5px')+' "IBM Plex Mono", monospace';
+      var w=ctx.measureText(label).width;
+      ctx.fillStyle=paper; ctx.globalAlpha=.92;
+      ctx.fillRect(n.px-w/2-4,n.py+n.r+5,w+8,16);
+      ctx.globalAlpha=1; ctx.fillStyle=ink;
+      ctx.fillText(label,n.px,n.py+n.r+17);
+    });
+  }
+  function loop(){ tick(); draw(); if(alpha>0.02||drag||hover){ raf=requestAnimationFrame(loop); } else raf=null; }
+  function kick(){ if(!raf) raf=requestAnimationFrame(loop); }
+  function at(ev){ var r=cv.getBoundingClientRect();
+    var x=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left, y=(ev.touches?ev.touches[0].clientY:ev.clientY)-r.top;
+    var best=null,bd=1e9;
+    N.forEach(function(n){ var d=Math.hypot(n.px-x,n.py-y); if(d<n.r+8&&d<bd){ bd=d; best=n; } });
+    return {x:x,y:y,n:best};
+  }
+  cv.addEventListener('pointerdown',function(e){ var h=at(e); if(h.n){ drag={n:h.n,moved:false}; cv.classList.add('grabbing'); cv.setPointerCapture(e.pointerId); alpha=Math.max(alpha,.35); kick(); } });
+  cv.addEventListener('pointermove',function(e){
+    if(drag){ var r=cv.getBoundingClientRect(); drag.n.px=e.clientX-r.left; drag.n.py=e.clientY-r.top; drag.moved=true; alpha=Math.max(alpha,.3); kick(); }
+    else { var h=at(e); if(h.n!==hover){ hover=h.n; cv.style.cursor=h.n?'pointer':'grab'; kick(); } }
+  });
+  cv.addEventListener('pointerup',function(e){
+    cv.classList.remove('grabbing');
+    if(drag&&!drag.moved&&drag.n.url){
+      var a=document.createElement('a'); a.href=drag.n.url;
+      if(/^https?:/.test(drag.n.url)&&a.origin!==location.origin){ a.target='_blank'; a.rel='noopener'; }
+      document.body.appendChild(a); a.click(); a.remove();
+    }
+    drag=null; kick();
+  });
+  cv.addEventListener('pointerleave',function(){ hover=null; kick(); });
+  new ResizeObserver(size).observe(wrap);
+  size(); kick();
+})();
+</script>`,
+}));
+
 /* ---------- 404 ---------- */
 write('404.html', layout({ title: 'Not found', content: '<h1 class="lang-en">404</h1><p>Nothing grows here.</p>' }));
 
 /* ---------- static assets + media ---------- */
 fs.cpSync('site/fonts', path.join(OUT, 'fonts'), { recursive: true });
 fs.copyFileSync('site/style.css', path.join(OUT, 'style.css'));
+fs.copyFileSync('site/app.js', path.join(OUT, 'app.js'));
 if (exists('covers')) fs.cpSync('covers', path.join(OUT, 'covers'), { recursive: true });
 for (const f of fs.readdirSync('.')) {
   if (/\.(mp3|png|jpe?g|webp)$/i.test(f)) fs.copyFileSync(f, path.join(OUT, f));

@@ -11,6 +11,17 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - Publish app at /publish.html — token per device (fine-grained PAT, Contents R/W on this repo only)
 - `site/publish.html` — in-browser publish/edit app (token-gated)
 
+## ChoHog v2 "the mechanical garden" (2026-07-18, branch `chohog-v2` — NOT live yet)
+- Full re-skin: thick ink borders, hard offset shadows, press-down buttons, hover lift, PostHog-style red/blue accent chips, bigger Recoleta titles, mono stamp labels
+- Speed: ALL fonts self-hosted (`site/fonts/`, incl. IBM Plex Mono + Noto Sans Hebrew — no Google Fonts requests), instant navigation via `site/app.js` (hover-prefetch + fetch-swap, view transitions), lazy/async images
+- `site/app.js` is the engine: instant nav, resizable grids (pinch / ⌘-scroll / sliders, persisted), drag-resizable sidebar, hover link previews (from `garden.json`), now-playing pill
+- Music player is shared across pages (window.gardenAudio) — audio keeps playing while browsing; player re-adopts the live track when you return to /music/
+- Obsidian features: hover preview popovers, markdown callouts (`> [!tip] Title`), backlinks panel, Garden Map page (/garden/) — draggable canvas graph of all content
+- Photos: flowing masonry (thumbs regenerated with natural aspect, publish app now uploads aspect thumbs too)
+- Sounds (mechanical clicks) deliberately deferred — user said later
+- QA: 15 headless functional tests passed (scratchpad qa.mjs pattern), all pages screenshotted light+dark+mobile+RTL
+- To ship: merge `chohog-v2` into `main` and push (deploy is auto via GitHub Actions)
+
 ## Current state (2026-07-18)
 - Live on https://chocho.lol with https enforced; publish → live in ~1 min
 - Publish app tabs: Beat / Photo / Note / Covers / Titles / Edit (+ Site settings via content/site.json)
