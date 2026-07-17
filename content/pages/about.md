@@ -1,6 +1,6 @@
 ---
 title: About
-title_he: אודות
+title_he: מה אני
 slug: about
 lang: en
 publish: true
@@ -8,13 +8,11 @@ publish: true
 
 <div class="mock-img" data-label="profile picture"></div>
 
-Hey, I'm Chocho (Isac Olmer). I make music in Tel-Aviv.
+Hey, I'm Chocho. 34, from Tel Aviv, soon relocating to New York with my partner Adi and our dog Andy.
 
-Beats, soundtracks, sonic identities - if it makes a sound, I'm probably into it. For five years I led the sounds catalog at [Artlist](http://artlist.io/sfx), where listening to everything from helicopter rotors to Icelandic glaciers was literally my job. It ruined silence for me forever.
+I work at a startup in stealth, and I build things for fun. I make beats and have produced songs and musical projects. Before that, I led the sounds catalog at Artlist - recording and listening to everything from helicopter rotors to Icelandic glaciers, and turning it into a product creators actually use.
 
-These days I produce for artists I love, score runway shows, build audio identities for brands, and drop a lo-fi beat whenever one escapes.
-
-This site is my garden. Beats, photos, notes, work - everything here is something I made or noticed. It grows when I do.
+I also love eating, cooking, photography, AI, drawing, making videos, and talking about art, economics, people, psychology - too many ideas to hold in my head. So my hope is to keep this garden growing with me, and share it with the internet.
 
 <div class="mock-img small" data-label="another picture, maybe with Andy"></div>
 
@@ -25,14 +23,11 @@ Say hi: [chochizzle8@gmail.com](mailto:chochizzle8@gmail.com)
 <!--he-->
 
 <div class="mock-img" data-label="תמונת פרופיל"></div>
+היי, אני צ'וצ'ו. בן 34 מתל אביב, ובקרוב עובר לניו יורק עם בת הזוג שלי עדי והכלב שלנו אנדי.
 
-היי, אני צ'וצ'ו (איזק אולמר). אני עושה מוזיקה בתל אביב.
+אני בונה דברים בשביל הכיף. אני עושה ביטים, הפקתי שירים ופרויקטים מוזיקליים, והייתי מנהל קטלוג סאונד בארטליסט.
 
-ביטים, פסקולים, זהויות סאונד - אם זה משמיע צליל, כנראה שזה מעניין אותי. חמש שנים הובלתי את קטלוג הסאונדים של [ארטליסט](http://artlist.io/sfx), שם להקשיב לכל דבר - ממסוקים ועד קרחונים באיסלנד - היה ממש העבודה שלי. זה הרס לי את השקט לתמיד.
-
-היום אני מפיק לאמנים שאני אוהב, מלחין לתצוגות אופנה, בונה זהויות סאונד למותגים, ומדי פעם משחרר ביט לו-פיי כשאחד בורח לי.
-
-האתר הזה הוא הגינה שלי. ביטים, תמונות, פתקים, עבודות - כל מה שכאן זה משהו שיצרתי או שמתי לב אליו. הוא גדל כשאני גדל.
+חוץ מזה אני אוהב לאכול, לבשל, צילום, בינה מלאכותית, ציור, יצירת סרטונים, ולדבר על אמנות, כלכלה, אנשים, פסיכולוגיה - יותר מדי רעיונות בשביל ראש אחד. אז התקווה שלי היא שהגינה הזאת תמשיך לגדול איתי, ושאשתף אותה עם האינטרנט.
 
 <div class="mock-img small" data-label="עוד תמונה, אולי עם אנדי"></div>
 
