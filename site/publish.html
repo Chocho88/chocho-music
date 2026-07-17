@@ -48,6 +48,14 @@
     padding: 4px 12px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: .8rem;
   }
   .cover-list button:hover { background: var(--ink); color: var(--paper); }
+  .trow { padding: 12px 0; border-bottom: 1px solid var(--hair); }
+  .trow .fname { font-size: .75rem; color: var(--dim); }
+  .trow input { margin-top: 6px; }
+  .trow button {
+    margin-top: 8px; background: none; border: 1px solid var(--ink); color: var(--ink);
+    padding: 4px 14px; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: .8rem;
+  }
+  .trow button:hover { background: var(--ink); color: var(--paper); }
   .token-box { border: 1px solid var(--hair); padding: 14px; margin-bottom: 10px; }
   .token-box.ok { border-color: var(--ink); }
   .hint { font-size: .78rem; color: var(--dim); margin-top: 6px; line-height: 1.5; }
@@ -70,6 +78,7 @@
   <button data-t="photo">Photo</button>
   <button data-t="note">Note</button>
   <button data-t="covers">Covers</button>
+  <button data-t="titles">Titles</button>
   <button data-t="edit">Edit</button>
 </div>
 
@@ -100,6 +109,11 @@
   <p class="hint">Tap a beat to give it a cover. Images are auto-squared. (Rotate / filters / text overlay - coming next.)</p>
   <ul class="cover-list" id="coverList"></ul>
   <input type="file" id="coverPick" accept="image/*" hidden>
+</div>
+
+<div class="pform" id="f-titles" hidden>
+  <p class="hint">Rename beats, projects and pages. Each row has its own Save - changes go live in ~1 minute.</p>
+  <div id="titlesList"></div>
 </div>
 
 <div class="pform" id="f-edit" hidden>
@@ -133,7 +147,7 @@
     $('tok').placeholder = ok ? 'token saved ✓ (paste a new one to replace)' : 'github_pat_...';
     $('ptabs').hidden=!ok;
     $('f-beat').hidden=!ok;
-    if(!ok){ ['f-photo','f-note','f-covers'].forEach(function(f){ $(f).hidden=true; }); }
+    if(!ok){ ['f-photo','f-note','f-covers','f-titles','f-edit'].forEach(function(f){ $(f).hidden=true; }); }
   }
   $('saveTok').addEventListener('click',function(){
     var v=$('tok').value.trim();
@@ -147,10 +161,11 @@
     b.addEventListener('click',function(){
       document.querySelectorAll('#ptabs button').forEach(function(x){x.classList.remove('on');});
       b.classList.add('on');
-      ['beat','photo','note','covers','edit'].forEach(function(t){
+      ['beat','photo','note','covers','titles','edit'].forEach(function(t){
         var el=$('f-'+t); el.classList.toggle('on', t===b.dataset.t); el.hidden = t!==b.dataset.t;
       });
       if(b.dataset.t==='covers') loadCovers();
+      if(b.dataset.t==='titles') loadTitles();
       if(b.dataset.t==='edit') loadBrowser();
     });
   });
@@ -354,6 +369,80 @@
       loadCovers();
     }catch(e){ status('Error: '+e.message); }
   });
+
+  /* ---- titles: friendly rename for beats, projects, pages ---- */
+  function getFm(raw, key){
+    var m=raw.match(new RegExp('^'+key+':\\s*(.*)$','m'));
+    return m ? m[1].trim().replace(/^["']|["']$/g,'') : '';
+  }
+  function setFm(raw, key, val){
+    var m=raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if(!m) return raw;
+    if(/[:#"']/.test(val)) val='"'+val.replace(/"/g,'\\"')+'"';
+    var fm=m[1], line=key+': '+val;
+    if(new RegExp('^'+key+':','m').test(fm)) fm=fm.replace(new RegExp('^'+key+':.*$','m'), function(){ return line; });
+    else fm+='\n'+line;
+    return raw.replace(m[0], function(){ return '---\n'+fm+'\n---'; });
+  }
+  function trow(box, fname){
+    var d=document.createElement('div'); d.className='trow';
+    if(fname){ var n=document.createElement('div'); n.className='fname'; n.textContent=fname; d.appendChild(n); }
+    box.appendChild(d); return d;
+  }
+  function saveBtn(row, fn){
+    var b=document.createElement('button'); b.textContent='Save';
+    b.addEventListener('click', async function(){
+      b.disabled=true;
+      try{ await fn(); status('Saved. Live in ~1 minute.'); }
+      catch(e){ status('Error: '+e.message); }
+      b.disabled=false;
+    });
+    row.appendChild(b);
+  }
+  async function loadTitles(){
+    status('Loading titles...');
+    var box=$('titlesList'); box.innerHTML='';
+    try{
+      var bf=await getFile('content/beats/beats.json');
+      var bdata=JSON.parse(decodeURIComponent(escape(atob(bf.content.replace(/\n/g,'')))));
+      var h=document.createElement('label'); h.textContent='Beats'; box.appendChild(h);
+      bdata.tracks.forEach(function(t,i){
+        var row=trow(box, t.file);
+        var inp=document.createElement('input'); inp.type='text'; inp.value=t.title; inp.dir='auto';
+        row.appendChild(inp);
+        saveBtn(row, async function(){
+          var v=inp.value.trim(); if(!v) throw new Error('title cannot be empty');
+          await updateJson('content/beats/beats.json', function(d){ d.tracks[i].title=v; return d; }, 'Rename beat: '+v);
+        });
+      });
+      var sections=[{label:'Projects', dir:'content/projects'},{label:'Pages', dir:'content/pages'}];
+      for(var s=0; s<sections.length; s++){
+        var files=(await listDir(sections[s].dir)).filter(function(f){ return /\.md$/.test(f.name); });
+        if(!files.length) continue;
+        var h2=document.createElement('label'); h2.textContent=sections[s].label; box.appendChild(h2);
+        for(var i=0; i<files.length; i++){
+          await (function(path, fname){
+            return getFile(path).then(function(f){
+              var raw=decodeURIComponent(escape(atob(f.content.replace(/\n/g,''))));
+              var row=trow(box, fname);
+              var en=document.createElement('input'); en.type='text'; en.value=getFm(raw,'title'); en.placeholder='Title (English)'; en.dir='auto';
+              var he=document.createElement('input'); he.type='text'; he.value=getFm(raw,'title_he'); he.placeholder='כותרת בעברית'; he.dir='auto';
+              row.appendChild(en); row.appendChild(he);
+              saveBtn(row, async function(){
+                var v=en.value.trim(); if(!v) throw new Error('title cannot be empty');
+                var cur=await getFile(path);
+                var txt=decodeURIComponent(escape(atob(cur.content.replace(/\n/g,''))));
+                txt=setFm(txt,'title',v);
+                if(he.value.trim()) txt=setFm(txt,'title_he',he.value.trim());
+                await putFile(path, b64utf8(txt), 'Rename: '+v, cur.sha);
+              });
+            });
+          })(files[i].path, files[i].name);
+        }
+      }
+      status('');
+    }catch(e){ status('Error: '+e.message); }
+  }
 
   /* ---- edit: super admin over all content ---- */
   var editSha=null, editFile=null;
