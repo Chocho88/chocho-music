@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PATH_PREFIX: /
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
