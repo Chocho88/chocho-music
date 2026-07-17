@@ -1,0 +1,43 @@
+[
+  {
+    "title": "TLV-MON",
+    "img": "tlv-mon.jpg",
+    "url": "https://tlv-mon.vercel.app",
+    "date": "2026-07",
+    "desc": "A Game Boy-style adventure about the hunt for a rent-controlled apartment in Tel Aviv.",
+    "desc_he": "משחק בסגנון גיימבוי על המרדף אחרי דירה בשכר מפוקח בתל אביב."
+  },
+  {
+    "title": "Manhattan Math",
+    "img": null,
+    "url": "ai/nyc-calculator/",
+    "internal": true,
+    "date": "2026-07",
+    "desc": "A cost-of-living calculator for a two-phase move to New York - every field editable.",
+    "desc_he": "מחשבון הון לרילוקיישן לניו יורק בשתי תקופות תזרים - כל שדה ניתן לעריכה."
+  },
+  {
+    "title": "The Control Dial",
+    "img": "control-dial.jpg",
+    "url": "https://graph-control-deploy.vercel.app",
+    "date": "2026-06",
+    "desc": "An interactive briefing on when knowledge graphs empower - and when they overwhelm.",
+    "desc_he": "בריפינג אינטראקטיבי על מתי גרף ידע מעצים - ומתי הוא מציף."
+  },
+  {
+    "title": "Yotam Olmer",
+    "img": "yotam.jpg",
+    "url": "https://yotam-lp.vercel.app",
+    "date": "2026-04",
+    "desc": "Landing page for my brother's debut album.",
+    "desc_he": "דף נחיתה לאלבום הבכורה של אחי יותם."
+  },
+  {
+    "title": "KooK",
+    "img": "kook.jpg",
+    "url": "https://kook.vercel.app",
+    "date": "2026-02",
+    "desc": "A recipe app that imports, organizes, and cooks along with you.",
+    "desc_he": "אפליקציית מתכונים שמייבאת, מסדרת ומבשלת יחד איתך."
+  }
+]
