@@ -283,10 +283,48 @@
   d.addEventListener('scroll', hidePeek, { passive: true, capture: true });
   d.addEventListener('click', hidePeek);
 
+  /* ---------- hero rotating sign (mechanical word flipper) ---------- */
+  var rollerTimer = null;
+  function initRoller() {
+    var mark = d.querySelector('.hero-mark[data-words]');
+    if (rollerTimer) { clearInterval(rollerTimer); rollerTimer = null; }
+    if (!mark) return;
+    var words = mark.getAttribute('data-words').split(',').filter(Boolean);
+    if (words.length < 2) return;
+    mark.innerHTML = '<span class="hm-win"><span class="hm-roll">' +
+      words.map(function (w) { return '<span class="hm-word"></span>'; }).join('') + '</span></span>';
+    var roll = mark.querySelector('.hm-roll'), win = mark.querySelector('.hm-win');
+    var slots = roll.children;
+    for (var i = 0; i < words.length; i++) slots[i].textContent = words[i];
+    var idx = 0, h = 0;
+    function fit(instant) {
+      h = slots[0].offsetHeight;
+      var w = Math.ceil(slots[idx].getBoundingClientRect().width);
+      if (instant) win.style.transition = 'none';
+      win.style.width = w + 'px';
+      if (instant) { void win.offsetWidth; win.style.transition = ''; }
+      roll.style.transform = 'translateY(' + (-idx * h) + 'px)';
+    }
+    fit(true);
+    rollerTimer = setInterval(function () {
+      if (!mark.isConnected) { clearInterval(rollerTimer); rollerTimer = null; return; }
+      if (d.hidden) return;
+      idx = (idx + 1) % words.length;
+      if (reduceMotion) { fit(true); return; }
+      mark.classList.add('ticking');           // the mechanism engages...
+      setTimeout(function () {
+        fit(false);                            // ...the sign rolls...
+        setTimeout(function () { mark.classList.remove('ticking'); }, 200); // ...and releases
+      }, 130);
+    }, 2800);
+    window.addEventListener('resize', function () { if (mark.isConnected) fit(true); });
+  }
+
   /* ---------- per-page init ---------- */
   function initPage() {
     var b = d.getElementById('beatSize'); if (b) b.value = sizes.beat.val;
     var p = d.getElementById('photoSize'); if (p) p.value = sizes.photo.val;
+    initRoller();
   }
   initPage();
   updatePill();

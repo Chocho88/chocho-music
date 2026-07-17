@@ -222,17 +222,37 @@ function card({ type, href, title, titleHe, date, lang, sub, media, accentTile }
 
 const artlistPage = pages.find((p) => p.slug === 'artlist');
 
+// "63 pictures · Kyoto · New York · Tel Aviv" - real places/tags, not a vague count
+function photoSub() {
+  const top = (get) => {
+    const freq = new Map();
+    photos.forEach((p) => (get(p) || []).forEach((v) => freq.set(v, (freq.get(v) || 0) + 1)));
+    return [...freq.entries()].sort((a, b) => b[1] - a[1]).map((e) => e[0]);
+  };
+  // primary place name only ("japan, kyoto" -> "Kyoto"), title-cased
+  const places = top((p) => p.loc ? [p.loc.split(',').pop().trim()] : [])
+    .map((l) => l.replace(/\b\w/g, (c) => c.toUpperCase()));
+  const bits = places.length ? places : top((p) => p.tags).map((t) => '#' + t);
+  return `${photos.length} pictures · ${bits.slice(0, 3).join(' · ')}`;
+}
+
 const feed = [
   ...notes.map((n) => ({ type: 'note', href: u(`notes/${n.slug}/`), title: n.title, date: n.date, lang: n.lang })),
   ...projects.map((p) => ({ type: 'project', href: u(`projects/#${p.slug}`), title: p.title, titleHe: p.titleHe, date: p.date, lang: p.lang })),
   ...(artlistPage ? [{ type: 'project', href: u('artlist/'), title: artlistPage.title, date: artlistPage.date, lang: 'en' }] : []),
-  ...(photos.length ? [{ type: 'photo', href: u('photos/'), title: 'Photos', sub: `${photos.length} pictures`, date: photos[0].date, lang: 'en', media: photos.slice(0, 3).map((p) => u(`photos/img/thumb-${p.file}`)) }] : []),
-  { type: 'beat', href: u('music/'), title: 'The player', sub: `${beats.tracks.length} beats`, date: beats.date || null, lang: 'en', media: beats.tracks.filter((t) => t.cover).slice(0, 2).map((t) => u(t.cover)), accentTile: true },
+  ...(photos.length ? [{ type: 'photo', href: u('photos/'), title: 'Photos', sub: photoSub(), date: photos[0].date, lang: 'en', media: photos.slice(0, 3).map((p) => u(`photos/img/thumb-${p.file}`)) }] : []),
+  { type: 'beat', href: u('music/'), title: 'The player', sub: `${beats.tracks.length} beats · latest: ${beats.tracks[0] ? beats.tracks[0].title : '-'}`, date: beats.date || null, lang: 'en', media: beats.tracks.filter((t) => t.cover).slice(0, 2).map((t) => u(t.cover)), accentTile: true },
   ...(exists('content/ai/ai.json') ? [{ type: 'project', href: u('ai/'), title: 'Building with AI', sub: `${JSON.parse(read('content/ai/ai.json')).length} experiments`, date: '2026-07-08', lang: 'en', media: exists('content/ai/img') ? fs.readdirSync('content/ai/img').slice(0, 2).map((f) => u(`ai/img/${f}`)) : [] }] : []),
 ].sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
 let heroTitle = esc(site.hero_title).replace(/\n/g, '<br>');
-if (site.hero_highlight) heroTitle = heroTitle.replace(esc(site.hero_highlight), `<span class="hero-mark">${esc(site.hero_highlight)}</span>`);
+// the highlight chip is a mechanical rotating sign - words overridable via site.json hero_words
+const heroWords = Array.isArray(site.hero_words) && site.hero_words.length
+  ? site.hero_words
+  : [site.hero_highlight || 'music', 'beats', 'notes', 'pictures', 'apps', 'sites', 'things']
+      .filter((w, i, a) => w && a.indexOf(w) === i);
+if (site.hero_highlight) heroTitle = heroTitle.replace(esc(site.hero_highlight),
+  `<span class="hero-mark" data-words="${esc(heroWords.join(','))}">${esc(site.hero_highlight)}</span>`);
 
 write('index.html', layout({
   title: site.name, active: 'home',
