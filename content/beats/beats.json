@@ -1,6 +1,12 @@
 {
-  "date": "2026-07-07",
+  "date": "2026-07-17",
   "tracks": [
+    {
+      "title": "Why?",
+      "file": "why.mp3",
+      "dur": 130,
+      "cover": null
+    },
     {
       "title": "WAR AGAIN",
       "file": "war-again.mp3",
