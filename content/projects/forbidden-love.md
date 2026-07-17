@@ -8,12 +8,13 @@ lang: en
 publish: true
 ---
 
-As part of my production studies at Rimon, I worked on this version of a well-known Israeli song, producing it in a dark, moody hip-hop style. I also created the edit by stitching together different anime clips into a narrative that visually speaks the music.
+שA cover music production project i did at Rimon school of music, I worked on this version of a well-known Israeli song, producing it in a dark, moody hip-hop style. I also created the edit by stitching together different anime clips into a narrative that visually speaks the music.
 
 {{yt zyG0I4oY9Pk}}
 
 <!--he-->
 
-כחלק מלימודי ההפקה שלי ברימון, עבדתי על גרסה לשיר ישראלי מוכר, בהפקה אפלה בסגנון היפ-הופ. יצרתי גם את העריכה - חיברתי קטעי אנימה שונים לנרטיב שמדבר את המוזיקה ויזואלית.
-
+הפקה מוזיקלית מהלימודים ברימון.
+טריפ הופ אפל על שיר של זהבה בן.
+הקליפ עשוי מגיפים של סדרות אנימה שהתחברו לי לסיפור
 {{yt zyG0I4oY9Pk}}
