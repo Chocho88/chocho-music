@@ -10,14 +10,10 @@ publish: true
 
 I fused an old cantor's (Hazan) chant with untamed jungle beats to score Tal Medina's "My Jewish Wedding" Hassidic Jungle runway show.
 
-This DNA track is jewish tradition unleashed in the wild.
-
 {{yt njKdmv1wRqs}}
 
 <!--he-->
 
-מיזגתי חזנות ישנה עם ביטים פראיים של ג'ונגל, לפסקול תצוגת "החתונה היהודית שלי" של טל מדינה.
-
-הטראק הזה הוא מסורת יהודית משוחררת בטבע.
+מיזגתי חזנות ישנה עם ביטים של ג'ונגל, לפסקול תצוגת "החתונה היהודית שלי" של טל מדינה.
 
 {{yt njKdmv1wRqs}}
