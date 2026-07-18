@@ -1,6 +1,587 @@
 {
-  "date": "2026-07-17",
+  "date": "2026-07-18",
   "tracks": [
+    {
+      "title": "679 intro",
+      "file": "679-intro.mp3",
+      "dur": 53,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "BITCH DONT",
+      "file": "bitch-dont.mp3",
+      "dur": 122,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "BOLD FIT DNA",
+      "file": "bold-fit-dna.mp3",
+      "dur": 33,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "BOMBO2",
+      "file": "bombo2.mp3",
+      "dur": 51,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "Blazto 2",
+      "file": "blazto-2.mp3",
+      "dur": 70,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "CRAZY PATSY HOUSE",
+      "file": "crazy-patsy-house.mp3",
+      "dur": 70,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "DIDNTI 3",
+      "file": "didnti-3.mp3",
+      "dur": 144,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "DONOWHY",
+      "file": "donowhy.m4a",
+      "dur": 190,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "Fergie Licious",
+      "file": "fergie-licious.mp3",
+      "dur": 134,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "HAOMNAM3",
+      "file": "haomnam3.mp3",
+      "dur": 126,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "Home is chocho",
+      "file": "home-is-chocho.mp3",
+      "dur": 145,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "Horin",
+      "file": "horin.mp3",
+      "dur": 77,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "ISSA VIBE",
+      "file": "issa-vibe.mp3",
+      "dur": 88,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "KASHE BILADEICHA",
+      "file": "kashe-biladeicha.mp3",
+      "dur": 106,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "Kalia leet shkiaa",
+      "file": "kalia-leet-shkiaa.mp3",
+      "dur": 147,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "MOON",
+      "file": "moon.mp3",
+      "dur": 185,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "Machetta 2.0",
+      "file": "machetta-2-0.mp3",
+      "dur": 72,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "Nasty3",
+      "file": "nasty3.mp3",
+      "dur": 113,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "RAP AVODA",
+      "file": "rap-avoda.m4a",
+      "dur": 61,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "TRAP SAMEACH",
+      "file": "trap-sameach.mp3",
+      "dur": 72,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "TULULU",
+      "file": "tululu.mp3",
+      "dur": 124,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "Voyeurs4",
+      "file": "voyeurs4.mp3",
+      "dur": 174,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "WAR IS OVER",
+      "file": "war-is-over.mp3",
+      "dur": 112,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "WHATSGOING ON TECHHOUSE",
+      "file": "whatsgoing-on-techhouse.mp3",
+      "dur": 100,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "Walking Down on Up",
+      "file": "walking-down-on-up.mp3",
+      "dur": 105,
+      "cover": null,
+      "year": 2023
+    },
+    {
+      "title": "anilorothze",
+      "file": "anilorothze.mp3",
+      "dur": 92,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "arisbeat",
+      "file": "arisbeat.m4a",
+      "dur": 139,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "basssss",
+      "file": "basssss.mp3",
+      "dur": 72,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "basssss2",
+      "file": "basssss2.mp3",
+      "dur": 55,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "beatey kafe A",
+      "file": "beatey-kafe-a.mp3",
+      "dur": 128,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "berishul2",
+      "file": "berishul2.mp3",
+      "dur": 106,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "binyamina",
+      "file": "binyamina.mp3",
+      "dur": 119,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "bo habaita",
+      "file": "bo-habaita.mp3",
+      "dur": 97,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "boombapsta",
+      "file": "boombapsta.mp3",
+      "dur": 90,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "collage19",
+      "file": "collage19.mp3",
+      "dur": 69,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "cowbelz",
+      "file": "cowbelz.mp3",
+      "dur": 32,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "davka",
+      "file": "davka.mp3",
+      "dur": 73,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "disney lofi",
+      "file": "disney-lofi.mp3",
+      "dur": 31,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "dochie a cao",
+      "file": "dochie-a-cao.mp3",
+      "dur": 125,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "elohu",
+      "file": "elohu.mp3",
+      "dur": 109,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "eshak lecha",
+      "file": "eshak-lecha.mp3",
+      "dur": 76,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "euforia",
+      "file": "euforia.mp3",
+      "dur": 124,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "fallin",
+      "file": "fallin.mp3",
+      "dur": 63,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "fat af",
+      "file": "fat-af.mp3",
+      "dur": 62,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "filmgrains",
+      "file": "filmgrains.mp3",
+      "dur": 119,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "financeit2",
+      "file": "financeit2.mp3",
+      "dur": 103,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "flashbak",
+      "file": "flashbak.mp3",
+      "dur": 104,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "goodnight 2",
+      "file": "goodnight-2.mp3",
+      "dur": 172,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "gospelbeats",
+      "file": "gospelbeats.mp3",
+      "dur": 125,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "hayu",
+      "file": "hayu.mp3",
+      "dur": 73,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "hello",
+      "file": "hello.mp3",
+      "dur": 108,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "higher less rain",
+      "file": "higher-less-rain.mp3",
+      "dur": 114,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "iloveu",
+      "file": "iloveu.mp3",
+      "dur": 71,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "kend",
+      "file": "kend.mp3",
+      "dur": 37,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "kendrik at la molin",
+      "file": "kendrik-at-la-molin.mp3",
+      "dur": 130,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "koh pangandump1",
+      "file": "koh-pangandump1.mp3",
+      "dur": 139,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "koh pangandump2",
+      "file": "koh-pangandump2.mp3",
+      "dur": 96,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "koh pangarage",
+      "file": "koh-pangarage.mp3",
+      "dur": 75,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "kus merutzmatos",
+      "file": "kus-merutzmatos.mp3",
+      "dur": 126,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "latinshit2",
+      "file": "latinshit2.mp3",
+      "dur": 119,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "mi amar ani velo kibel",
+      "file": "mi-amar-ani-velo-kibel.mp3",
+      "dur": 129,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "milatova3",
+      "file": "milatova3.mp3",
+      "dur": 136,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "money treez",
+      "file": "money-treez.mp3",
+      "dur": 153,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "move away 2",
+      "file": "move-away-2.mp3",
+      "dur": 131,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "neverlookinback",
+      "file": "neverlookinback.mp3",
+      "dur": 69,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "newera",
+      "file": "newera.mp3",
+      "dur": 127,
+      "cover": null,
+      "year": 2023
+    },
+    {
+      "title": "nokia Trap2",
+      "file": "nokia-trap2.mp3",
+      "dur": 4,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "nokia UK",
+      "file": "nokia-uk.mp3",
+      "dur": 27,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "ok ok",
+      "file": "ok-ok.mp3",
+      "dur": 55,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "pashutu",
+      "file": "pashutu.mp3",
+      "dur": 248,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "sancho pancho2",
+      "file": "sancho-pancho2.mp3",
+      "dur": 64,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "seek & find",
+      "file": "seek-find.mp3",
+      "dur": 237,
+      "cover": null,
+      "year": 2022
+    },
+    {
+      "title": "shalva2",
+      "file": "shalva2.mp3",
+      "dur": 145,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "stambeatbalayla",
+      "file": "stambeatbalayla.mp3",
+      "dur": 121,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "stride",
+      "file": "stride.mp3",
+      "dur": 99,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "takeitofffff",
+      "file": "takeitofffff.mp3",
+      "dur": 51,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "tet for example",
+      "file": "tet-for-example.mp3",
+      "dur": 41,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "the way u",
+      "file": "the-way-u.mp3",
+      "dur": 67,
+      "cover": null,
+      "year": 2024
+    },
+    {
+      "title": "truth again",
+      "file": "truth-again.mp3",
+      "dur": 108,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "war again2",
+      "file": "war-again2.mp3",
+      "dur": 248,
+      "cover": null,
+      "year": 2026
+    },
+    {
+      "title": "where is my husband",
+      "file": "where-is-my-husband.mp3",
+      "dur": 165,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "yakir li melavski beat",
+      "file": "yakir-li-melavski-beat.mp3",
+      "dur": 34,
+      "cover": null,
+      "year": 2025
+    },
+    {
+      "title": "לאחותך",
+      "file": "לאחותך.mp3",
+      "dur": 63,
+      "cover": null,
+      "year": 2022
+    },
     {
       "title": "Why?",
       "file": "why.mp3",

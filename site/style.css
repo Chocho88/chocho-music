@@ -30,6 +30,7 @@
   --on-accent: #23251D;
   --chip-red: #F54E00;
   --chip-blue: #1D4AFF;
+  --chip-green: #2E7D4F;
   --on-chip: #FFFFFF;
   --bw: 2.5px;                       /* the ink border */
   --shadow: 5px 5px 0 var(--ink);
@@ -51,7 +52,7 @@
     --ink-2: rgba(240,239,230,.82); --dim: rgba(240,239,230,.60);
     --hair: rgba(240,239,230,.25); --wash: rgba(240,239,230,.08);
     --on-accent: #23251D;
-    --chip-red: #FF6B33; --chip-blue: #6B8CFF; --on-chip: #1A1B16;
+    --chip-red: #FF6B33; --chip-blue: #6B8CFF; --chip-green: #58B380; --on-chip: #1A1B16;
   }
 }
 
@@ -381,6 +382,51 @@ article p, article ul, article ol, article h2, article h3,
 @keyframes chSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 body.is-playing .beat-card.active .beat-shape,
 body.is-playing .np-cover .beat-shape { animation: chSpin 2.2s linear infinite; }
+
+/* ---- beat tools: view toggle + sort + filter ---- */
+.beat-tools { display: flex; align-items: center; gap: 10px; margin: 16px 0 2px; flex-wrap: wrap; }
+.beat-tools .seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow-sm); background: var(--surface); }
+.beat-tools .seg button {
+  background: var(--surface); color: var(--ink); border: none; cursor: pointer;
+  width: 36px; height: 32px; display: flex; align-items: center; justify-content: center;
+  transition: background var(--t), color var(--t);
+}
+.beat-tools .seg button + button { border-inline-start: 2px solid var(--ink); }
+.beat-tools .seg button.on { background: var(--accent); color: var(--on-accent); }
+.beat-tools .seg button:not(.on):hover { background: var(--ink); color: var(--paper); }
+.beat-tools select {
+  appearance: none; -webkit-appearance: none;
+  font-family: var(--mono); font-weight: 600; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink); background: var(--surface);
+  border: 2px solid var(--ink); border-radius: 999px; padding: 5px 30px 5px 14px;
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2323251D' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 10px;
+}
+.beat-tools select:hover { transform: translate(-1px,-1px); box-shadow: var(--shadow); }
+.beat-tools select:active { transform: translate(1px,1px); box-shadow: none; }
+body.beats-list-view .size-ctl { display: none; }
+
+/* ---- beat list view ---- */
+.beat-list { display: block; margin-top: 14px; border: 2px solid var(--ink); border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow-sm); overflow: hidden; }
+.beat-row {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  background: var(--surface); color: var(--ink); border: none; cursor: pointer; text-align: start;
+  font-family: inherit; font-size: inherit;
+  padding: 9px 14px; border-bottom: 2px solid var(--hair);
+  transition: background var(--t);
+}
+.beat-list .beat-row:last-child { border-bottom: none; }
+.beat-row:hover { background: var(--wash); }
+.beat-row:active { background: var(--wash); transform: translate(1px,1px); }
+.beat-row.active { background: var(--wash); box-shadow: inset 4px 0 0 var(--accent); }
+.br-ico { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--paper); }
+.br-ico img { width: 100%; height: 100%; object-fit: cover; }
+.br-ico .beat-shape.glyph { font-size: 18px; -webkit-text-stroke: 1px var(--ink); }
+.br-title { flex: 1; font-weight: 600; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.br-meta { font-size: .68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 34%; }
+.br-dur { font-size: .75rem; flex-shrink: 0; }
+body.is-playing .beat-row.active .beat-shape { animation: chSpin 2.2s linear infinite; }
 
 /* ---- beat cards grid (resizable via --beat-min) ---- */
 .beat-grid {

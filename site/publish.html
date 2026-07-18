@@ -74,9 +74,10 @@
 </div>
 
 <div class="ptabs" id="ptabs" hidden>
-  <button data-t="beat" class="on">Beat</button>
+  <button data-t="beat" class="on">+ Beat</button>
   <button data-t="photo">Photo</button>
   <button data-t="note">Note</button>
+  <button data-t="beatsedit">Beats</button>
   <button data-t="covers">Covers</button>
   <button data-t="titles">Titles</button>
   <button data-t="edit">Edit</button>
@@ -104,6 +105,13 @@
   <label>Image (optional)</label><input type="file" id="noteImg" accept="image/*">
   <button type="button" class="go" id="goNote">Plant note</button>
 </form>
+
+<div class="pform" id="f-beatsedit" hidden>
+  <p class="hint">Every beat: name, genre, mood, year. Edit as many as you want, then hit
+  <b>Save all changes</b> once - it publishes everything in one go.</p>
+  <button type="button" class="go" id="beatsSaveAll">Save all changes</button>
+  <div id="beatsEditList"></div>
+</div>
 
 <div class="pform" id="f-covers" hidden>
   <p class="hint">Tap a beat to give it a cover. Images are auto-squared. (Rotate / filters / text overlay - coming next.)</p>
@@ -147,7 +155,7 @@
     $('tok').placeholder = ok ? 'token saved ✓ (paste a new one to replace)' : 'github_pat_...';
     $('ptabs').hidden=!ok;
     $('f-beat').hidden=!ok;
-    if(!ok){ ['f-photo','f-note','f-covers','f-titles','f-edit'].forEach(function(f){ $(f).hidden=true; }); }
+    if(!ok){ ['f-photo','f-note','f-beatsedit','f-covers','f-titles','f-edit'].forEach(function(f){ $(f).hidden=true; }); }
   }
   $('saveTok').addEventListener('click',function(){
     var v=$('tok').value.trim();
@@ -161,9 +169,10 @@
     b.addEventListener('click',function(){
       document.querySelectorAll('#ptabs button').forEach(function(x){x.classList.remove('on');});
       b.classList.add('on');
-      ['beat','photo','note','covers','titles','edit'].forEach(function(t){
+      ['beat','photo','note','beatsedit','covers','titles','edit'].forEach(function(t){
         var el=$('f-'+t); el.classList.toggle('on', t===b.dataset.t); el.hidden = t!==b.dataset.t;
       });
+      if(b.dataset.t==='beatsedit') loadBeatsEdit();
       if(b.dataset.t==='covers') loadCovers();
       if(b.dataset.t==='titles') loadTitles();
       if(b.dataset.t==='edit') loadBrowser();
@@ -377,6 +386,66 @@
       status('Cover saved. Live in ~1 minute.');
       loadCovers();
     }catch(e){ status('Error: '+e.message); }
+  });
+
+  /* ---- beats editor: name / genre / mood / year per beat, one commit for all ---- */
+  var beatsEditState=null; // {tracks:[...], dirty:Set}
+  async function loadBeatsEdit(){
+    status('Loading beats...');
+    var box=$('beatsEditList'); box.innerHTML='';
+    try{
+      var bf=await getFile('content/beats/beats.json');
+      var bdata=JSON.parse(decodeURIComponent(escape(atob(bf.content.replace(/\n/g,'')))));
+      beatsEditState={tracks:bdata.tracks, dirty:new Set()};
+      bdata.tracks.forEach(function(t,i){
+        var row=trow(box, t.file+(t.dur?'  ·  '+Math.floor(t.dur/60)+':'+String(t.dur%60).padStart(2,'0'):''));
+        function field(key, ph, style){
+          var inp=document.createElement('input'); inp.type='text';
+          inp.value=t[key]||''; inp.placeholder=ph; inp.dir='auto';
+          if(style) inp.style.cssText=style;
+          inp.addEventListener('input',function(){ beatsEditState.dirty.add(i); t[key]=inp.value.trim(); });
+          row.appendChild(inp); return inp;
+        }
+        field('title','Beat name');
+        var line=document.createElement('div'); line.style.cssText='display:flex;gap:8px;margin-top:6px';
+        row.appendChild(line);
+        function small(key, ph, w){
+          var inp=document.createElement('input'); inp.type='text';
+          inp.value=t[key]||''; inp.placeholder=ph;
+          inp.style.cssText='flex:'+w;
+          inp.addEventListener('input',function(){ beatsEditState.dirty.add(i);
+            var v=inp.value.trim();
+            if(key==='year'){ var y=parseInt(v); t.year = (y>1990&&y<2100)?y:undefined; if(!t.year&&v) inp.style.borderColor='var(--accent)'; else inp.style.borderColor=''; }
+            else t[key]=v||undefined; });
+          line.appendChild(inp); return inp;
+        }
+        small('genre','genre (hip-hop, lo-fi...)','2');
+        small('mood','mood (dark, sunny...)','2');
+        small('year','year','1');
+      });
+      status(bdata.tracks.length+' beats loaded. Edit freely, then Save all changes.');
+    }catch(e){ status('Error: '+e.message); }
+  }
+  $('beatsSaveAll').addEventListener('click', async function(){
+    if(!beatsEditState){ status('Open the list first.'); return; }
+    if(!beatsEditState.dirty.size){ status('Nothing changed yet.'); return; }
+    var bad=beatsEditState.tracks.find(function(t){ return !t.title; });
+    if(bad){ status('Error: "'+bad.file+'" has an empty name.'); return; }
+    this.disabled=true;
+    try{
+      var n=beatsEditState.dirty.size;
+      await updateJson('content/beats/beats.json', function(d){
+        d.tracks=beatsEditState.tracks.map(function(t){
+          var o={title:t.title, file:t.file, dur:t.dur, cover:t.cover||null};
+          if(t.genre) o.genre=t.genre; if(t.mood) o.mood=t.mood; if(t.year) o.year=t.year;
+          return o;
+        });
+        return d;
+      }, 'Beats editor: update '+n+' beat(s)');
+      beatsEditState.dirty.clear();
+      status('Saved '+n+' beat(s). Live in ~1 minute. (If you do not see it: hard refresh - Cmd+Shift+R.)');
+    }catch(e){ status('Error: '+e.message); }
+    this.disabled=false;
   });
 
   /* ---- titles: friendly rename for beats, projects, pages ---- */

@@ -320,7 +320,10 @@ if (artlistPage) {
 }
 
 /* ---------- music: player with beat cards + productions ---------- */
-const tracksJson = JSON.stringify(beats.tracks.map((t) => ({ title: t.title, file: u(t.file), dur: t.dur, cover: t.cover ? u(t.cover) : null })));
+const tracksJson = JSON.stringify(beats.tracks.map((t) => ({
+  title: t.title, file: u(t.file), dur: t.dur, cover: t.cover ? u(t.cover) : null,
+  genre: t.genre || null, mood: t.mood || null, year: t.year || null,
+})));
 
 write('music/index.html', layout({
   title: 'Music', active: 'music',
@@ -347,41 +350,123 @@ write('music/index.html', layout({
       <a id="btnDl" href="#" download aria-label="download" title="Download"><svg viewBox="0 0 24 24" width="17" height="17"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg></a>
     </div>
   </div>
+  <div class="beat-tools">
+    <span class="seg" role="group" aria-label="view">
+      <button id="viewCards" title="Cards" aria-label="card view"><svg viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" d="M1 1h6v6H1zM9 1h6v6H9zM1 9h6v6H1zM9 9h6v6H9z"/></svg></button><button id="viewList" title="List" aria-label="list view"><svg viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" d="M1 2h14v2H1zM1 7h14v2H1zM1 12h14v2H1z"/></svg></button>
+    </span>
+    <select id="sortSel" aria-label="order"></select>
+    <select id="filterSel" aria-label="filter" hidden></select>
+  </div>
   <div class="size-ctl"><label for="beatSize">Tile size</label><input type="range" id="beatSize" min="110" max="260" step="5" value="150"><span class="hint">pinch / ⌘ scroll</span></div>
   <div class="beat-grid" id="beatGrid"></div>`,
   extraBody: `<script>
 (function(){
   var TRACKS=${tracksJson};
-  function ptsStar(n,R,r){var p=[];for(var k=0;k<2*n;k++){var a=Math.PI*k/n-Math.PI/2;var rad=k%2?r:R;p.push((50+rad*Math.cos(a)).toFixed(1)+','+(50+rad*Math.sin(a)).toFixed(1));}return p.join(' ');}
-  function ptsPoly(n,R){var p=[];for(var k=0;k<n;k++){var a=2*Math.PI*k/n-Math.PI/2;p.push((50+R*Math.cos(a)).toFixed(1)+','+(50+R*Math.sin(a)).toFixed(1));}return p.join(' ');}
-  var SHAPES=[{pts:ptsStar(5,46,20)},{ch:'*'},{pts:ptsPoly(6,46)},{ch:'$'},{pts:ptsStar(4,46,15)},{pts:ptsPoly(5,46)},{pts:ptsStar(8,46,34)},{ch:'\u266a'},{pts:ptsPoly(3,48)},{pts:ptsStar(6,46,26)}];
-  function shapeHtml(i,size){var s=SHAPES[i%SHAPES.length];var rot=i%2?8:-8;
-    if(s.pts)return '<span class="beat-shape" style="transform:rotate('+rot+'deg)"><svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'"><polygon points="'+s.pts+'" fill="var(--accent)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></span>';
-    return '<span class="beat-shape glyph" style="transform:rotate('+rot+'deg)'+(s.ch==='*'?';padding-top:.28em':'')+'">'+s.ch+'</span>';}
-  var audio=window.gardenAudio||(window.gardenAudio=new Audio()); audio.preload='none';
-  var cur=0, shuffle=true, repeat='none', order=[];
   var $=function(id){return document.getElementById(id);};
   var fmt=function(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-  function buildOrder(){ order=TRACKS.map(function(_,i){return i;});
-    if(shuffle){ for(var i=order.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=order[i];order[i]=order[j];order[j]=t; } } }
+  /* ---- unique spinning shape per beat: type/points/rotation/color all from a name hash ---- */
+  function ptsStar(n,R,r){var p=[];for(var k=0;k<2*n;k++){var a=Math.PI*k/n-Math.PI/2;var rad=k%2?r:R;p.push((50+rad*Math.cos(a)).toFixed(1)+','+(50+rad*Math.sin(a)).toFixed(1));}return p.join(' ');}
+  function ptsPoly(n,R){var p=[];for(var k=0;k<n;k++){var a=2*Math.PI*k/n-Math.PI/2;p.push((50+R*Math.cos(a)).toFixed(1)+','+(50+R*Math.sin(a)).toFixed(1));}return p.join(' ');}
+  function hash(s){var h=5381;for(var i=0;i<s.length;i++){h=(((h<<5)+h)+s.charCodeAt(i))>>>0;}return h;}
+  var COLS=['var(--accent)','var(--chip-red)','var(--chip-blue)','var(--chip-green)','var(--ink)'];
+  var GLYPHS=['*','$','\u266a','\u2726','\u273b','\u00a7','&','\u00bf'];
+  function shapeHtml(t,size){
+    var h=hash(t.file);
+    var col=COLS[(h>>>3)%COLS.length];
+    var rot=((h>>>7)%17)-8;
+    var kind=h%5;
+    if(kind===4){
+      var ch=GLYPHS[(h>>>11)%GLYPHS.length];
+      return '<span class="beat-shape glyph" style="color:'+col+';transform:rotate('+rot+'deg)'+(ch==='*'?';padding-top:.28em':'')+'">'+ch+'</span>';
+    }
+    var pts;
+    if(kind===0) pts=ptsStar(4+((h>>>13)%5),46,16+((h>>>17)%20));
+    else if(kind===1) pts=ptsPoly(3+((h>>>13)%6),46);
+    else if(kind===2) pts=ptsStar(8+((h>>>13)%5),46,34+((h>>>17)%8));
+    else pts=ptsStar(6+((h>>>13)%4),46,26+((h>>>17)%8));
+    return '<span class="beat-shape" style="transform:rotate('+rot+'deg)"><svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'"><polygon points="'+pts+'" fill="'+col+'" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/></svg></span>';
+  }
+  var audio=window.gardenAudio||(window.gardenAudio=new Audio()); audio.preload='none';
+  var cur=0, shuffle=true, repeat='none', order=[];
+  /* ---- view / sort / filter (shuffle stays the default order) ---- */
+  var view='cards', sortMode='shuffle', filterVal='';
+  try{ view=localStorage.getItem('gardenView')||'cards'; sortMode=localStorage.getItem('gardenSortMode')||'shuffle'; }catch(e){}
+  var displayed=[];
+  function computeDisplayed(){
+    var idx=TRACKS.map(function(_,i){return i;});
+    if(filterVal){ var c=filterVal.indexOf(':'); var k=filterVal.slice(0,c), v=filterVal.slice(c+1);
+      idx=idx.filter(function(i){ return String(TRACKS[i][k]||'')===v; }); }
+    if(sortMode==='shuffle'){ for(var i=idx.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=idx[i];idx[i]=idx[j];idx[j]=t;} }
+    else if(sortMode==='year'){ idx.sort(function(a,b){ return (TRACKS[b].year||0)-(TRACKS[a].year||0) || TRACKS[a].title.localeCompare(TRACKS[b].title); }); }
+    else if(sortMode==='az'){ idx.sort(function(a,b){ return TRACKS[a].title.localeCompare(TRACKS[b].title); }); }
+    else if(sortMode==='long'){ idx.sort(function(a,b){ return (TRACKS[b].dur||0)-(TRACKS[a].dur||0); }); }
+    displayed=idx;
+  }
   var grid=$('beatGrid');
-  TRACKS.forEach(function(t,i){
-    var el=document.createElement('button');
-    el.className='beat-card';
-    el.innerHTML='<span class="bc-cover">'+(t.cover?'<img loading="lazy" alt="" src="'+t.cover+'">':shapeHtml(i,74))+'<span class="bc-play"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span></span>'+
-      '<span class="bc-title lang-en"></span><span class="bc-dur dim mono">'+fmt(t.dur)+'</span>';
-    el.querySelector('.bc-title').textContent=t.title;
-    el.addEventListener('click',function(){ load(i); play(); });
-    grid.appendChild(el);
-  });
+  var PLAY_ICO='<span class="bc-play"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M8 5v14l11-7z"/></svg></span>';
+  function render(){
+    grid.className = view==='list' ? 'beat-list' : 'beat-grid';
+    document.body.classList.toggle('beats-list-view', view==='list');
+    $('viewCards').classList.toggle('on', view!=='list');
+    $('viewList').classList.toggle('on', view==='list');
+    grid.innerHTML='';
+    displayed.forEach(function(i){ var t=TRACKS[i];
+      var el=document.createElement('button');
+      el.setAttribute('data-idx', i);
+      var meta=[t.genre,t.mood,t.year].filter(Boolean).join(' \u00b7 ');
+      if(view==='list'){
+        el.className='beat-row';
+        el.innerHTML='<span class="br-ico">'+(t.cover?'<img loading="lazy" decoding="async" alt="" src="'+t.cover+'">':shapeHtml(t,24))+'</span>'+
+          '<span class="br-title lang-en"></span><span class="br-meta dim mono"></span><span class="br-dur dim mono">'+fmt(t.dur)+'</span>';
+        el.querySelector('.br-meta').textContent=meta;
+        el.querySelector('.br-title').textContent=t.title;
+      } else {
+        el.className='beat-card';
+        el.innerHTML='<span class="bc-cover">'+(t.cover?'<img loading="lazy" decoding="async" alt="" src="'+t.cover+'">':shapeHtml(t,74))+PLAY_ICO+'</span>'+
+          '<span class="bc-title lang-en"></span><span class="bc-dur dim mono"></span>';
+        el.querySelector('.bc-title').textContent=t.title;
+        el.querySelector('.bc-dur').textContent=[fmt(t.dur),meta].filter(Boolean).join(' \u00b7 ');
+      }
+      el.classList.toggle('active', i===cur && !!audio.src);
+      el.addEventListener('click',function(){ load(i); play(); });
+      grid.appendChild(el);
+    });
+  }
+  /* controls: only offer sorts/filters the data can actually answer */
+  (function tools(){
+    var years=TRACKS.some(function(t){return t.year;});
+    var opts=[['shuffle','Shuffle'],['new','Newest']];
+    if(years) opts.push(['year','By year']);
+    opts.push(['az','A\u2013Z'],['long','Longest']);
+    var ss=$('sortSel');
+    ss.innerHTML=opts.map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>';}).join('');
+    if(!opts.some(function(o){return o[0]===sortMode;})) sortMode='shuffle';
+    ss.value=sortMode;
+    ss.addEventListener('change',function(){ sortMode=ss.value;
+      try{ localStorage.setItem('gardenSortMode',sortMode); }catch(e){}
+      computeDisplayed(); buildOrder(); render(); });
+    var fs=$('filterSel'), groups=[['genre','Genre'],['mood','Mood'],['year','Year']], html='<option value="">All beats</option>', any=false;
+    groups.forEach(function(g){
+      var vals=[]; TRACKS.forEach(function(t){ var v=t[g[0]]; if(v&&vals.indexOf(String(v))<0) vals.push(String(v)); });
+      if(g[0]==='year') vals.sort(function(a,b){return b-a;}); else vals.sort();
+      if(vals.length){ any=true;
+        html+='<optgroup label="'+g[1]+'">'+vals.map(function(v){return '<option value="'+g[0]+':'+v+'">'+v+'</option>';}).join('')+'</optgroup>'; }
+    });
+    if(any){ fs.innerHTML=html; fs.hidden=false;
+      fs.addEventListener('change',function(){ filterVal=fs.value; computeDisplayed(); buildOrder(); render(); }); }
+    $('viewCards').addEventListener('click',function(){ view='cards'; try{localStorage.setItem('gardenView',view);}catch(e){} render(); });
+    $('viewList').addEventListener('click',function(){ view='list'; try{localStorage.setItem('gardenView',view);}catch(e){} render(); });
+  })();
+  function buildOrder(){ order=displayed.slice();
+    if(shuffle){ for(var i=order.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=order[i];order[i]=order[j];order[j]=t; } } }
   function sync(i){ cur=i; var t=TRACKS[i];
     window.gardenNow=t.title;
     if(!$('npTitle')) return;
     $('npTitle').textContent=t.title;
-    $('npCover').innerHTML = t.cover ? '<img alt="" decoding="async" src="'+t.cover+'">' : shapeHtml(i,38);
+    $('npCover').innerHTML = t.cover ? '<img alt="" decoding="async" src="'+t.cover+'">' : shapeHtml(t,38);
     $('npDur').textContent=fmt(t.dur);
     $('btnDl').href=t.file;
-    [].forEach.call(grid.children,function(c,j){ c.classList.toggle('active', j===i); });
+    [].forEach.call(grid.children,function(c){ c.classList.toggle('active', +c.getAttribute('data-idx')===i); });
   }
   function load(i){ sync(i); var t=TRACKS[i];
     audio.src=t.file;
@@ -410,7 +495,7 @@ write('music/index.html', layout({
   audio.onended=function(){ if(repeat==='track'){ audio.currentTime=0; play(); } else step(1); };
   audio.onplay=function(){ if($('icoPlay')){ $('icoPlay').style.display='none'; $('icoPause').style.display=''; } };
   audio.onpause=function(){ if($('icoPlay')){ $('icoPlay').style.display=''; $('icoPause').style.display='none'; } };
-  buildOrder();
+  computeDisplayed(); render(); buildOrder();
   // came back while music is loaded? adopt the live track instead of resetting it
   var adopted=-1;
   if(audio.src){ var path=decodeURI(audio.src).replace(location.origin,'');
