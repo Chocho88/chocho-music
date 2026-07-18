@@ -8,7 +8,7 @@ lang: en
 publish: true
 ---
 
-שA cover music production project i did at Rimon school of music, I worked on this version of a well-known Israeli song, producing it in a dark, moody hip-hop style. I also created the edit by stitching together different anime clips into a narrative that visually speaks the music.
+A cover music production project i did at Rimon school of music, I worked on this version of a well-known Israeli song, producing it in a dark, moody hip-hop style. I also created the edit by stitching together different anime clips into a narrative that visually speaks the music.
 
 {{yt zyG0I4oY9Pk}}
 
