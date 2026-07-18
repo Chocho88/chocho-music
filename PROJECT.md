@@ -19,21 +19,26 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - Obsidian features: hover preview popovers, markdown callouts (`> [!tip] Title`), backlinks panel, Garden Map page (/garden/) — draggable canvas graph of all content
 - Photos: flowing masonry (thumbs regenerated with natural aspect, publish app now uploads aspect thumbs too)
 - Sounds (mechanical clicks) deliberately deferred — user said later
-- Hero chip = mechanical rotating sign (music/beats/notes/pictures/apps/sites/things), words editable via site.json `hero_words`
+- Hero chip = mechanical rotating sign (music/beats/notes/pictures/apps/sites/things), 1s cadence, the box resizes to each word (`.hm-word { width: max-content }` — without it every word measures as the widest one); words editable via site.json `hero_words`
+- Instant nav always revalidates pages (`fetch cache:'no-cache'` + 60s session TTL) so publishes appear on the next click; etag 304s keep it instant
 - Mobile: home cards are compact info rows (photos card lists real places, player card shows latest beat); all pages audited zero h-overflow at 390px
 - QA: 15 + 18 headless puppeteer tests passed (qa.mjs/qa2.mjs pattern in session scratchpad); light+dark+mobile+RTL screenshotted
 - NOTE for future sessions: headless Chrome CLI screenshots clamp window width to 500px and crop — use puppeteer-core with setViewport for honest mobile shots
 
-## Current state (2026-07-18)
-- Live on https://chocho.lol with https enforced; publish → live in ~1 min
-- Publish app tabs: Beat / Photo / Note / Covers / Titles / Edit (+ Site settings via content/site.json)
+## Current state (2026-07-18, end of v2 night)
+- ChoHog v2 LIVE on https://chocho.lol; `main` == `chohog-v2` (fast-forward pushes via `git push origin chohog-v2:main`)
+- Working copies on this Mac: main checkout `~/Desktop/chocho claudet/chocho-music` (sitting on `player-preview-assets`) + git worktree `~/Desktop/chocho claudet/chocho-music-v2` (branch `chohog-v2`) — v2 work happens in the worktree
+- Publish app tabs: Beat / Photo / Note / Covers / Titles / Edit (+ Site settings via content/site.json; hero text now ends at "I make music" — user trimmed "in Tel-Aviv")
 - Content: ~29 beats, 63 photos, projects, "Building with AI" section (incl. Manhattan Math calculator)
-- Homepage: ChoHog hero ("Hey, I'm Chocho...") — editable via content/site.json (name, hero, description) in the publish Edit tab
-- Parked: `player-preview-assets` branch — 7 tracks hosted, player preview not wired into the site yet
+- v2 visual review page (screenshots of every page): https://claude.ai/code/artifact/4918c3e7-21ee-4069-b041-9dbaea62b27d
+- Parked: `player-preview-assets` branch — 7 tracks hosted, player preview not wired into the site yet; mechanical click sounds for v2 also parked
 
 ## Incidents & lessons
 - 2026-07-18: a parallel chat session overwrote `site/style.css` with a stale pre-ChoHog copy ("AI card styles" commit) → design reverted live. Fixed by restoring ChoHog css + re-appending the .ai-* block. LESSON: multiple sessions push to main — always `git fetch` and diff against `origin/main` before pushing, especially for `site/style.css` and `build.js`.
+- 2026-07-18 (night): "my publish isn't showing" — publishes WERE live; GitHub Pages sends `cache-control: max-age=600`, so the browser shows a stale copy for up to 10 min. Fix shipped: instant nav revalidates every click, publish app statuses now say "hard refresh — Cmd+Shift+R". Remaining gap: the very first address-bar load can still be stale up to 10 min (can't override from our side). Diagnose with `curl -s "https://chocho.lol/?nc=$(date +%s)"` before assuming a deploy failed.
 
 ## Decisions
 - 2026-07-17: moved off the dark design baseline for this project — ChoHog uses a cream/olive light palette on purpose
 - GitHub auth on this Mac goes through the `gh` CLI (logged in as Chocho88, set up 2026-07-17); `gh auth setup-git` wired it into git
+- 2026-07-18: THIS PROJECT ONLY — user granted standing approval to push/deploy directly once QA passes ("stop asking for permissions", "push directly when its ready"). Still fetch + check origin/main first (see incident above). Other projects keep the global ask-before-push rule.
+- 2026-07-18: QA pattern for this site = puppeteer-core + system Chrome against a local `_site` server: functional suite (instant nav, cross-page audio, sliders, previews, lightbox, RTL) + overflow audit (scrollWidth vs clientWidth at 390px on every page) + real-viewport screenshots. Headless Chrome CLI (`--screenshot`) clamps window width to 500px and silently crops — never use it for mobile shots.
