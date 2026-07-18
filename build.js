@@ -779,7 +779,7 @@ fs.copyFileSync('site/style.css', path.join(OUT, 'style.css'));
 fs.copyFileSync('site/app.js', path.join(OUT, 'app.js'));
 if (exists('covers')) fs.cpSync('covers', path.join(OUT, 'covers'), { recursive: true });
 for (const f of fs.readdirSync('.')) {
-  if (/\.(mp3|png|jpe?g|webp)$/i.test(f)) fs.copyFileSync(f, path.join(OUT, f));
+  if (/\.(mp3|m4a|png|jpe?g|webp)$/i.test(f)) fs.copyFileSync(f, path.join(OUT, f));
 }
 
 console.log('built ok:', fs.readdirSync(OUT).length, 'entries in _site');
