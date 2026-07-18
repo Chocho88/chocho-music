@@ -25,6 +25,15 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - QA: 15 + 18 headless puppeteer tests passed (qa.mjs/qa2.mjs pattern in session scratchpad); light+dark+mobile+RTL screenshotted
 - NOTE for future sessions: headless Chrome CLI screenshots clamp window width to 500px and crop — use puppeteer-core with setViewport for honest mobile shots
 
+## The beat vault (2026-07-18 late night — LIVE)
+- 112 beats total: bulk-ingested 83 tracks from `~/Desktop/My Music 24/Curated Music` via `tools/ingest-beats.mjs` (wav/aiff auto-convert to m4a via afconvert; durations via mdls→afinfo fallback; year from recording tag→file birth date)
+- beats.json tracks now carry optional `genre` / `mood` / `year`; music page shows them on cards/rows
+- Music page: cards⇄list view toggle, sort (Shuffle default / Newest / By year / A–Z / Longest), filter select (genre/mood/year, only rendered when data exists), everything persisted in localStorage; play order follows the filtered view
+- Every coverless beat gets a unique spinning shape — type/points/rotation/color hashed from filename; palette = sun/red/blue/green/ink (`--chip-green` added)
+- Publish app: new **Beats** tab (name/genre/mood/year per beat, "Save all changes" = one commit); upload tab renamed "+ Beat"
+- GOTCHA fixed: build.js asset copy regex must include every audio extension — m4a 404'd live until added
+- 29 original beats have no year yet — fill in via publish → Beats tab
+
 ## Current state (2026-07-18, end of v2 night)
 - ChoHog v2 LIVE on https://chocho.lol; `main` == `chohog-v2` (fast-forward pushes via `git push origin chohog-v2:main`)
 - Working copies on this Mac: main checkout `~/Desktop/chocho claudet/chocho-music` (sitting on `player-preview-assets`) + git worktree `~/Desktop/chocho claudet/chocho-music-v2` (branch `chohog-v2`) — v2 work happens in the worktree
