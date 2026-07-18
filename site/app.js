@@ -314,9 +314,9 @@
       mark.classList.add('ticking');           // the mechanism engages...
       setTimeout(function () {
         fit(false);                            // ...the sign rolls...
-        setTimeout(function () { mark.classList.remove('ticking'); }, 200); // ...and releases
-      }, 130);
-    }, 2800);
+        setTimeout(function () { mark.classList.remove('ticking'); }, 170); // ...and releases
+      }, 110);
+    }, 1000);
     window.addEventListener('resize', function () { if (mark.isConnected) fit(true); });
   }
 

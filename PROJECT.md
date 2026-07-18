@@ -11,7 +11,7 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - Publish app at /publish.html — token per device (fine-grained PAT, Contents R/W on this repo only)
 - `site/publish.html` — in-browser publish/edit app (token-gated)
 
-## ChoHog v2 "the mechanical garden" (2026-07-18, branch `chohog-v2` — NOT live yet)
+## ChoHog v2 "the mechanical garden" (2026-07-18 — LIVE on chocho.lol, shipped with user's "ship it")
 - Full re-skin: thick ink borders, hard offset shadows, press-down buttons, hover lift, PostHog-style red/blue accent chips, bigger Recoleta titles, mono stamp labels
 - Speed: ALL fonts self-hosted (`site/fonts/`, incl. IBM Plex Mono + Noto Sans Hebrew — no Google Fonts requests), instant navigation via `site/app.js` (hover-prefetch + fetch-swap, view transitions), lazy/async images
 - `site/app.js` is the engine: instant nav, resizable grids (pinch / ⌘-scroll / sliders, persisted), drag-resizable sidebar, hover link previews (from `garden.json`), now-playing pill
@@ -19,8 +19,10 @@ Music portfolio site ("ChoHog") for chocho.lol. Beats, projects, productions, ph
 - Obsidian features: hover preview popovers, markdown callouts (`> [!tip] Title`), backlinks panel, Garden Map page (/garden/) — draggable canvas graph of all content
 - Photos: flowing masonry (thumbs regenerated with natural aspect, publish app now uploads aspect thumbs too)
 - Sounds (mechanical clicks) deliberately deferred — user said later
-- QA: 15 headless functional tests passed (scratchpad qa.mjs pattern), all pages screenshotted light+dark+mobile+RTL
-- To ship: merge `chohog-v2` into `main` and push (deploy is auto via GitHub Actions)
+- Hero chip = mechanical rotating sign (music/beats/notes/pictures/apps/sites/things), words editable via site.json `hero_words`
+- Mobile: home cards are compact info rows (photos card lists real places, player card shows latest beat); all pages audited zero h-overflow at 390px
+- QA: 15 + 18 headless puppeteer tests passed (qa.mjs/qa2.mjs pattern in session scratchpad); light+dark+mobile+RTL screenshotted
+- NOTE for future sessions: headless Chrome CLI screenshots clamp window width to 500px and crop — use puppeteer-core with setViewport for honest mobile shots
 
 ## Current state (2026-07-18)
 - Live on https://chocho.lol with https enforced; publish → live in ~1 min
