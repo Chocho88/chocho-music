@@ -30,16 +30,19 @@
   audio.addEventListener('ended', updatePill);
 
   /* ---------- instant navigation ---------- */
-  var cache = new Map(); // url -> Promise<text>
+  var cache = new Map(); // url -> {t, p:Promise<text>}
   function cacheGet(url) {
-    if (!cache.has(url)) {
-      if (cache.size > 40) cache.delete(cache.keys().next().value);
-      cache.set(url, fetch(url, { credentials: 'same-origin' }).then(function (r) {
-        if (!r.ok) throw new Error(r.status);
-        return r.text();
-      }).catch(function (e) { cache.delete(url); throw e; }));
-    }
-    return cache.get(url);
+    var e = cache.get(url);
+    if (e && Date.now() - e.t < 60000) return e.p; // fresh enough for this session
+    if (cache.size > 40) cache.delete(cache.keys().next().value);
+    // no-cache = always revalidate with the server (etag 304 keeps it instant),
+    // so a fresh publish shows up on the next click instead of 10 minutes later
+    var p = fetch(url, { credentials: 'same-origin', cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.text();
+    }).catch(function (err) { cache.delete(url); throw err; });
+    cache.set(url, { t: Date.now(), p: p });
+    return p;
   }
   function linkFor(el) {
     var a = el && el.closest ? el.closest('a') : null;

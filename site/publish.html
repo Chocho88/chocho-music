@@ -280,7 +280,7 @@
         d.tracks.unshift({title:title, file:slug+'.mp3', dur:dur, cover:coverPath});
         return d;
       }, 'Add beat to index: '+title);
-      status('Done. "'+title+'" goes live in ~1 minute.');
+      status('Done. "'+title+'" goes live in ~1 minute. (If you do not see it: hard refresh - Cmd+Shift+R.)');
       $('beatFile').value=''; $('beatTitle').value=''; $('beatCover').value='';
     }catch(e){ status('Error: '+e.message); }
     this.disabled=false;
@@ -309,7 +309,7 @@
       await updateJson('content/photos/photos.json', function(d){
         return entries.concat(d||[]);
       }, 'Add '+entries.length+' photo(s)');
-      status('Done. '+entries.length+' photo(s) go live in ~1 minute.');
+      status('Done. '+entries.length+' photo(s) go live in ~1 minute. (If you do not see them: hard refresh - Cmd+Shift+R.)');
       $('photoFiles').value=''; $('photoTags').value=''; $('photoLoc').value='';
     }catch(e){ status('Error: '+e.message); }
     this.disabled=false;
@@ -333,7 +333,7 @@
       var md='---\ntitle: "'+title.replace(/"/g,'\\"')+'"\ndate: '+today+'\nlang: '+lang+'\npublish: true\n---\n\n'+body+'\n';
       status('Planting note...');
       await putFile('content/notes/'+slug+'.md', b64utf8(md), 'Note: '+title);
-      status('Done. "'+title+'" goes live in ~1 minute.');
+      status('Done. "'+title+'" goes live in ~1 minute. (If you do not see it: hard refresh - Cmd+Shift+R.)');
       $('noteTitle').value=''; $('noteBody').value=''; $('noteImg').value='';
     }catch(e){ status('Error: '+e.message); }
     this.disabled=false;
@@ -402,7 +402,7 @@
     var b=document.createElement('button'); b.textContent='Save';
     b.addEventListener('click', async function(){
       b.disabled=true;
-      try{ await fn(); status('Saved. Live in ~1 minute.'); }
+      try{ await fn(); status('Saved. Live in ~1 minute. (If you do not see it: hard refresh - Cmd+Shift+R.)'); }
       catch(e){ status('Error: '+e.message); }
       b.disabled=false;
     });
@@ -513,7 +513,7 @@
       status('Saving...');
       var res=await putFile(editFile, b64utf8($('editArea').value), 'Edit: '+editFile, editSha);
       editSha=res.content.sha;
-      status('Saved. Live in ~1 minute.');
+      status('Saved. Live in ~1 minute. (If you do not see it: hard refresh - Cmd+Shift+R.)');
     }catch(e){ status(/JSON/.test(e.name||'')||e instanceof SyntaxError ? 'Not saved - invalid JSON: '+e.message : 'Error: '+e.message); }
     this.disabled=false;
   });
